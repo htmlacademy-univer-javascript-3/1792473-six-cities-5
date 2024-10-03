@@ -7,9 +7,12 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
+export type City = 'Paris' | 'Cologne' | 'Brussels' | 'Amsterdam' | 'Hamburg' | 'Dusseldorf';
+
 export interface AppData {
   currentUser: Nullable<UserDTO>;
   offers: OfferDTO[];
+  favourites: Partial<Record<City, OfferDTO[]>>;
 }
 
 const curUser: UserDTO = {
@@ -133,9 +136,20 @@ const offers: OfferDTO[] = [
   }
 ];
 
+const favourites: Partial<Record<City, OfferDTO[]>> = {
+  Amsterdam: [
+    offers[3],
+    offers[1]
+  ],
+  Cologne: [
+    offers[2]
+  ]
+};
+
 const data: AppData = {
   currentUser: curUser,
-  offers: offers
+  offers: offers,
+  favourites: favourites
 };
 
 root.render(
