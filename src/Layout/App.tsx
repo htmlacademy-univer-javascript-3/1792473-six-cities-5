@@ -39,7 +39,8 @@ export const App: React.FC<AppProps> = (props) => {
                 <Route path="/MainPage" element={<MainPage offers={data.offers} showCount={10}/>}/>
                 <Route path="/MainEmpty" element={<MainPage offers={[]} showCount={10}/>}/>
                 <Route path="/OfferPage" element={<OfferPage user={data.currentUser} offer={data.offers[0]}/>}/>
-                <Route path="/Favourites" element={<FavouritesPage favourites={data.favourites}/>}/>
+                <Route path="/FavouritesPage" element={<FavouritesPage favourites={data.favourites}/>}/>
+                <Route path="/EmptyFavouritesPage" element={<FavouritesPage favourites={{}}/>}/>
               </Routes>
             </>
           }
