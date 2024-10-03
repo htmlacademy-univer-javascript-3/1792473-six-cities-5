@@ -10,12 +10,14 @@ export interface AppProps {
 }
 
 export const App: React.FC<AppProps> = (props) => {
-  const [data, setData] = React.useState<AppData>(props.data);
-  const signIn = () => {
-    setData(data);
+  const [data, setData] = React.useState<AppData>({...props.data});
+  const signIn = (event: React.MouseEvent<HTMLSpanElement>) => {
+    event.preventDefault();
+    setData(props.data);
   };
 
-  const signOut = () => {
+  const signOut = (event: React.MouseEvent<HTMLSpanElement>) => {
+    event.preventDefault();
     const dataCopy: AppData = {...data};
     dataCopy.currentUser = null;
     setData(dataCopy);
@@ -23,7 +25,7 @@ export const App: React.FC<AppProps> = (props) => {
 
   return (
     <div className="page page--gray page--main">
-      <Header currentUser={props.data.currentUser} signIn={signIn} signOut={signOut}/>
+      <Header currentUser={data.currentUser} signIn={signIn} signOut={signOut}/>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/MainPage"/>}/>

@@ -4,8 +4,8 @@ import {Nullable} from 'vitest';
 
 export interface HeaderProps {
   currentUser: Nullable<UserDTO>;
-  signIn: () => void;
-  signOut: () => void;
+  signIn: (event: React.MouseEvent<HTMLSpanElement>) => void;
+  signOut: (event: React.MouseEvent<HTMLSpanElement>) => void;
 }
 
 export const Header: React.FC<HeaderProps> = (props) =>
