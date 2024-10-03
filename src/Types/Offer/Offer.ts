@@ -13,6 +13,7 @@ export class ReviewDTO {
 
 export class UserDTO {
   name: string = '';
+  email: string = '';
   avatarImagePath: string = '';
   level: HostLevel = 'Unknown';
 }
