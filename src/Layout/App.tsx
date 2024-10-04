@@ -5,7 +5,7 @@ import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 import {Header} from './Header.tsx';
 import {OfferPage} from '../Pages/Offer/OfferPage.tsx';
 import {SignInPage} from '../Pages/SignIn/SignInPage.tsx';
-import {FavouritesPage} from "../Pages/Favourites/FavouritesPage.tsx";
+import {FavouritesPage} from '../Pages/Favourites/FavouritesPage.tsx';
 
 export interface AppProps {
   data: AppData;
