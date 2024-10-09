@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client';
-import {App} from './Layout/App.tsx';
+import {App} from './App.tsx';
 import {OfferDTO, UserDTO} from './Types/Offer/Offer.ts';
-import {Nullable} from 'vitest';
+import {Guid} from './Types/Common.ts';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -10,8 +10,7 @@ const root = ReactDOM.createRoot(
 export type City = 'Paris' | 'Cologne' | 'Brussels' | 'Amsterdam' | 'Hamburg' | 'Dusseldorf';
 
 export interface AppData {
-  currentUser: Nullable<UserDTO>;
-  offers: OfferDTO[];
+  offers: { [id: Guid]: OfferDTO };
   favourites: Partial<Record<City, OfferDTO[]>>;
 }
 
@@ -36,8 +35,8 @@ const max: UserDTO = {
   level: 'Unknown'
 };
 
-const offers: OfferDTO[] = [
-  {
+const offers: { [id: Guid]: OfferDTO } = {
+  '1': {
     cost: 120,
     shortDescription: 'Beautiful & luxurious apartment at great location',
     description: [
@@ -83,9 +82,9 @@ const offers: OfferDTO[] = [
         text: 'A quiet cozy and picturesque that hides behind a a river by the unique lightness of Amsterdam. The building is green and from 18th century.'
       }
     ],
-    getNeighbours: () => offers.slice(0, 3)
+    getNeighbours: () => Object.values(offers).slice(0, 3)
   },
-  {
+  '2': {
     cost: 80,
     shortDescription: 'Wood and stone place',
     description: [],
@@ -97,7 +96,7 @@ const offers: OfferDTO[] = [
     reviews: [],
     getNeighbours: () => []
   },
-  {
+  '3': {
     cost: 132,
     shortDescription: 'Canal View Prinsengracht',
     description: [],
@@ -109,7 +108,7 @@ const offers: OfferDTO[] = [
     reviews: [],
     getNeighbours: () => []
   },
-  {
+  '4': {
     cost: 180,
     shortDescription: 'Nice, cozy, warm big bed apartment',
     description: [],
@@ -122,7 +121,7 @@ const offers: OfferDTO[] = [
     reviews: [],
     getNeighbours: () => []
   },
-  {
+  '5': {
     cost: 80,
     shortDescription: 'Wood and stone place',
     description: [],
@@ -134,7 +133,7 @@ const offers: OfferDTO[] = [
     reviews: [],
     getNeighbours: () => []
   }
-];
+};
 
 const favourites: Partial<Record<City, OfferDTO[]>> = {
   Amsterdam: [
@@ -147,11 +146,10 @@ const favourites: Partial<Record<City, OfferDTO[]>> = {
 };
 
 const data: AppData = {
-  currentUser: curUser,
   offers: offers,
   favourites: favourites
 };
 
 root.render(
-  <App data={data}/>
+  <App data={data} currentUser={curUser} />
 );
