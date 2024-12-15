@@ -5,9 +5,9 @@ import {OfferPage} from './Pages/Offer/OfferPage.tsx';
 import {SignInPage} from './Pages/SignIn/SignInPage.tsx';
 import {FavouritesPage} from './Pages/Favourites/FavouritesPage.tsx';
 import {Nullable} from 'vitest';
-import {UserDTO} from './Types/Offer/Offer.ts';
+import {City, UserDTO} from './Types/Offer/Offer.ts';
 import {NotFoundPage} from './Pages/NotFound/NotFoundPage.tsx';
-import {AppData, City} from './Mocks/offers.ts';
+import {AppData} from './Mocks/mock.ts';
 
 export interface AppProps {
   data: AppData;

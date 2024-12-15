@@ -1,9 +1,8 @@
 import React from 'react';
-import {UserDTO} from '../Types/Offer/Offer.ts';
+import {City, UserDTO} from '../Types/Offer/Offer.ts';
 import {Nullable} from 'vitest';
 import {AuthContext} from '../App.tsx';
 import {NavLink} from 'react-router-dom';
-import {City} from '../Mocks/offers.ts';
 
 export interface HeaderProps {
   currentUser: Nullable<UserDTO>;

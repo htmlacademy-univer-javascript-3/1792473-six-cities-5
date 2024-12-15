@@ -1,16 +1,16 @@
-import {OfferDTO} from '../../Types/Offer/Offer.ts';
+import {OfferDTO, City} from '../../Types/Offer/Offer.ts';
 import React from 'react';
 import {Place} from './Place.tsx';
-import {City} from '../../Mocks/offers.ts';
+import {Nullable} from 'vitest';
 
 export interface PlacesProps {
   offers: OfferDTO[];
   city: City;
   showCount: number;
+  setActivePlace: (offer: Nullable<OfferDTO>) => void;
 }
 
 export const Places: React.FC<PlacesProps> = (props) => {
-  // const [activePlaceIndex, setActivePlaceIndex] = React.useState<Nullable<number>>(null);
 
   if (props.offers.length === 0) {
     return (
@@ -46,7 +46,7 @@ export const Places: React.FC<PlacesProps> = (props) => {
         </ul>
       </form>
       <div className="cities__places-list places__list tabs__content">
-        {props.offers.slice(0, props.showCount).map((x) => <Place offer={x} key={x.id}/>)}
+        {props.offers.slice(0, props.showCount).map((x) => <Place offer={x} setActivePlace={props.setActivePlace} key={x.id}/>)}
       </div>
     </section>
   );
