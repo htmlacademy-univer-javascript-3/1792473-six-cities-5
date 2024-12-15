@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {PropsWithChildren} from 'react';
 import {UserDTO} from '../Types/Offer/Offer.ts';
 import {Nullable} from 'vitest';
+import {AuthContext} from '../App.tsx';
 
 export interface HeaderProps {
   currentUser: Nullable<UserDTO>;
@@ -50,3 +51,21 @@ export const Header: React.FC<HeaderProps> = (props) =>
       </div>
     </header>
   );
+
+export const UserPageWrapper: React.FC<PropsWithChildren> = (props) => {
+  const auth = React.useContext(AuthContext);
+  const signIn = (e: React.MouseEvent<HTMLSpanElement>) => {
+    e.preventDefault();
+    auth?.signIn();
+  };
+  const signOut = (e: React.MouseEvent<HTMLSpanElement>) => {
+    e.preventDefault();
+    auth?.signOut();
+  };
+  return (
+    <div>
+      <Header currentUser={auth?.currentUser} signIn={signIn} signOut={signOut}/>
+      {props.children}
+    </div>
+  );
+};
