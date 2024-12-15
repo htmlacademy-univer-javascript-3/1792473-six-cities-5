@@ -3,6 +3,7 @@ import {AuthorizedContent} from './AuthorizedContent.tsx';
 
 export interface PageProps {
   authRequired?: boolean;
+  header?: React.ReactNode;
   navBar?: React.ReactNode;
   footer?: React.ReactNode;
   pageClassNames?: string;
@@ -11,14 +12,11 @@ export interface PageProps {
 export const Page: React.FC<PropsWithChildren<PageProps>> = (props) =>
   (
     <AuthorizedContent authRequired={props.authRequired}>
-      <div>
-        {props.navBar}
-        <div className="page">
-          <main className={`page__main ${props.pageClassNames ?? ''}`}>
-            {props.children}
-          </main>
-          {props.footer}
-        </div>
-      </div>
+      {props.header}
+      {props.navBar}
+      <main className={`page__main ${props.pageClassNames ?? ''}`}>
+        {props.children}
+      </main>
+      {props.footer}
     </AuthorizedContent>
   );

@@ -1,9 +1,11 @@
 import React from 'react';
 import {NavLink} from 'react-router-dom';
+import {City} from '../../Mocks/offers.ts';
 
 export interface SignInPageProps {
+  defaultCity: City;
 }
-export const SignInPage: React.FC<SignInPageProps> = () => (
+export const SignInPage: React.FC<SignInPageProps> = (props) => (
   <div className="page page--gray page--login">
     <header className="header">
       <div className="container">
@@ -35,9 +37,9 @@ export const SignInPage: React.FC<SignInPageProps> = () => (
         </section>
         <section className="locations locations--login locations--current">
           <div className="locations__item">
-            <a className="locations__item-link" href="#">
-              <span>Amsterdam</span>
-            </a>
+            <NavLink className="locations__item-link" to={`/main?city=${props.defaultCity}`}>
+              <span>{props.defaultCity}</span>
+            </NavLink>
           </div>
         </section>
       </div>

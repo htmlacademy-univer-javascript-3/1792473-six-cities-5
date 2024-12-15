@@ -1,10 +1,10 @@
 import React from 'react';
 import {OfferDTO} from '../../Types/Offer/Offer.ts';
-import {City} from '../../index.tsx';
 import {FavouritePlace} from './FavouritePlace.tsx';
 import {NavLink} from 'react-router-dom';
 import {Page} from '../../Layout/Page.tsx';
-import {UserPageWrapper} from '../../Layout/Header.tsx';
+import {AuthorizedHeader} from '../../Layout/Header.tsx';
+import {City} from '../../Mocks/offers.ts';
 
 export interface FavouritesPageProps {
   favourites: Partial<Record<City, OfferDTO[]>>;
@@ -23,9 +23,9 @@ export const FavouritesPage: React.FC<FavouritesPageProps> = (props) => {
                 <li className="favorites__locations-items" key={c}>
                   <div className="favorites__locations locations locations--current">
                     <div className="locations__item">
-                      <a className="locations__item-link" href="#">
+                      <NavLink className="locations__item-link" to={`/main?city=${c}`}>
                         <span>{c}</span>
-                      </a>
+                      </NavLink>
                     </div>
                   </div>
                   <div className="favorites__places">
@@ -56,19 +56,20 @@ export const FavouritesPage: React.FC<FavouritesPageProps> = (props) => {
     );
   }
   return (
-    <UserPageWrapper>
-      <Page pageClassNames="" authRequired
-        footer=
-          {
-            <footer className="footer container page">
-              <NavLink className="footer__logo-link" to="/MainPage">
-                <img className="footer__logo" src="img/logo.svg" alt="6 cities logo" width="64" height="33"/>
-              </NavLink>
-            </footer>
-          }
-      >
-        {content}
-      </Page>
-    </UserPageWrapper>
+    <Page
+      header={<AuthorizedHeader/>}
+      pageClassNames=""
+      authRequired
+      footer=
+        {
+          <footer className="footer container page">
+            <NavLink className="footer__logo-link" to="/MainPage">
+              <img className="footer__logo" src="img/logo.svg" alt="6 cities logo" width="64" height="33"/>
+            </NavLink>
+          </footer>
+        }
+    >
+      {content}
+    </Page>
   );
 };
