@@ -1,5 +1,6 @@
 import React from 'react';
 import {OfferDTO} from '../../Types/Offer/Offer.ts';
+import {NavLink} from 'react-router-dom';
 
 export interface FavouritePlaceProps {
   offer: OfferDTO;
@@ -14,9 +15,9 @@ export const FavouritePlace: React.FC<FavouritePlaceProps> = ({offer}) => (
       </div>
     }
     <div className="favorites__image-wrapper place-card__image-wrapper">
-      <a href="#">
+      <NavLink to={`/offer/${offer.id}`}>
         <img className="place-card__image" src={offer.imagePath} width="150" height="110" alt="Place image"/>
-      </a>
+      </NavLink>
     </div>
     <div className="favorites__card-info place-card__info">
       <div className="place-card__price-wrapper">
@@ -38,7 +39,7 @@ export const FavouritePlace: React.FC<FavouritePlaceProps> = ({offer}) => (
         </div>
       </div>
       <h2 className="place-card__name">
-        <a href="#">{offer.shortDescription}</a>
+        <NavLink to={`/offer/${offer.id}`}>{offer.shortDescription}</NavLink>
       </h2>
       <p className="place-card__type">{offer.type}</p>
     </div>

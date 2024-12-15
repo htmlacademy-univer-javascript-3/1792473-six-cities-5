@@ -1,5 +1,6 @@
 import {Guid} from '../Common.ts';
 import {Nullable} from 'vitest';
+import {City} from '../../Mocks/offers.ts';
 
 export type HostLevel = 'Pro' | 'Unknown';
 
@@ -16,6 +17,7 @@ export class UserDTO {
   email: string = '';
   avatarImagePath: string = '';
   level: HostLevel = 'Unknown';
+  favourites: Partial<Record<City, OfferDTO[]>> = {};
 }
 
 export class OfferDetailsDTO {
@@ -28,6 +30,7 @@ export class OfferDetailsDTO {
 
 export class OfferDTO {
   id: Guid = '';
+  city: City = 'Amsterdam';
   cost: number = 0;
   shortDescription: string = '';
   description: string[] = [];
