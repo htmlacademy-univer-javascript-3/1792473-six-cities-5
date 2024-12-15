@@ -1,7 +1,6 @@
 import {Guid} from '../Types/Common.ts';
-import {OfferDTO, UserDTO} from '../Types/Offer/Offer.ts';
+import {City, Cords, OfferDTO, UserDTO} from '../Types/Offer/Offer.ts';
 
-export type City = 'Paris' | 'Cologne' | 'Brussels' | 'Amsterdam' | 'Hamburg' | 'Dusseldorf';
 
 export interface AppData {
   offersById: { [id: Guid]: OfferDTO };
@@ -23,6 +22,13 @@ export const max: UserDTO = {
   name: 'Max',
   level: 'Unknown'
 };
+
+export const cords: Cords[] = [
+  {x: 52.3909553943508, y: 4.85309666406198},
+  {x: 52.3609553943508, y: 4.85309666406198},
+  {x: 52.3909553943508, y: 4.929309666406198},
+  {x: 52.3809553943508, y: 4.939309666406198}
+];
 
 export const amsterdamOffers: { [id: Guid]: OfferDTO } = {
   '1': {
@@ -72,6 +78,7 @@ export const amsterdamOffers: { [id: Guid]: OfferDTO } = {
         text: 'A quiet cozy and picturesque that hides behind a a river by the unique lightness of Amsterdam. The building is green and from 18th century.'
       }
     ],
+    cords: cords[0],
     getNeighbours: () => Object.values(amsterdamOffers).slice(0, 3)
   },
   '2': {
@@ -85,6 +92,7 @@ export const amsterdamOffers: { [id: Guid]: OfferDTO } = {
     type: 'Room',
     details: null,
     reviews: [],
+    cords: cords[1],
     getNeighbours: () => []
   },
   '3': {
@@ -98,6 +106,7 @@ export const amsterdamOffers: { [id: Guid]: OfferDTO } = {
     type: 'Apartment',
     details: null,
     reviews: [],
+    cords: cords[2],
     getNeighbours: () => []
   },
   '4': {
@@ -110,8 +119,8 @@ export const amsterdamOffers: { [id: Guid]: OfferDTO } = {
     isPremium: true,
     rating: 100,
     type: 'Apartment',
-    details: null,
     reviews: [],
+    cords: cords[3],
     getNeighbours: () => []
   },
   '5': {
@@ -123,7 +132,6 @@ export const amsterdamOffers: { [id: Guid]: OfferDTO } = {
     imagePath: 'img/room.jpg',
     rating: 80,
     type: 'Room',
-    details: null,
     reviews: [],
     getNeighbours: () => []
   }
@@ -139,7 +147,6 @@ export const cologneOffers: { [id: Guid]: OfferDTO } = {
     imagePath: 'img/apartment-02.jpg',
     rating: 80,
     type: 'Apartment',
-    details: null,
     reviews: [],
     getNeighbours: () => []
   },
@@ -153,7 +160,6 @@ export const cologneOffers: { [id: Guid]: OfferDTO } = {
     isPremium: true,
     rating: 100,
     type: 'Apartment',
-    details: null,
     reviews: [],
     getNeighbours: () => []
   },

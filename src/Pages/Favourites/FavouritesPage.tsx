@@ -1,10 +1,9 @@
 import React from 'react';
-import {OfferDTO} from '../../Types/Offer/Offer.ts';
+import {City, OfferDTO} from '../../Types/Offer/Offer.ts';
 import {FavouritePlace} from './FavouritePlace.tsx';
 import {NavLink} from 'react-router-dom';
 import {Page} from '../../Layout/Page.tsx';
 import {AuthorizedHeader} from '../../Layout/Header.tsx';
-import {City} from '../../Mocks/offers.ts';
 
 export interface FavouritesPageProps {
   favourites: Partial<Record<City, OfferDTO[]>>;

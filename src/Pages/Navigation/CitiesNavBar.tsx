@@ -1,5 +1,5 @@
 import React from 'react';
-import {City} from '../../Mocks/offers.ts';
+import {City} from '../../Types/Offer/Offer.ts';
 
 export interface CitiesNavBarProps {
   cities: City[];

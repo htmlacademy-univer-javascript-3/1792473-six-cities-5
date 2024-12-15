@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import {App} from './App.tsx';
-import {curUser, data} from './Mocks/offers.ts';
+import {curUser, data} from './Mocks/mock.ts';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

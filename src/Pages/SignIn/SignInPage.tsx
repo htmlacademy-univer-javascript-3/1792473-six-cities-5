@@ -1,6 +1,6 @@
 import React from 'react';
 import {NavLink} from 'react-router-dom';
-import {City} from '../../Mocks/offers.ts';
+import {City} from '../../Types/Offer/Offer.ts';
 
 export interface SignInPageProps {
   defaultCity: City;
