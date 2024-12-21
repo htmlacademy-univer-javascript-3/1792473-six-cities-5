@@ -1,16 +1,15 @@
 import {OfferDTO, City} from '../../Types/Offer/Offer.ts';
 import React from 'react';
-import {Place} from './Place.tsx';
-import {Nullable} from 'vitest';
+import {PlaceCard} from '../../Components/PlaceCard.tsx';
 
-export interface PlacesProps {
+export interface CityPlacesProps {
   offers: OfferDTO[];
   city: City;
   showCount: number;
-  setActivePlace: (offer: Nullable<OfferDTO>) => void;
+  setActivePlace: (offer: OfferDTO | undefined) => void;
 }
 
-export const Places: React.FC<PlacesProps> = (props) => {
+export const CityPlaces: React.FC<CityPlacesProps> = (props) => {
 
   if (props.offers.length === 0) {
     return (
@@ -46,7 +45,7 @@ export const Places: React.FC<PlacesProps> = (props) => {
         </ul>
       </form>
       <div className="cities__places-list places__list tabs__content">
-        {props.offers.slice(0, props.showCount).map((x) => <Place offer={x} setActivePlace={props.setActivePlace} key={x.id}/>)}
+        {props.offers.slice(0, props.showCount).map((x) => <PlaceCard classPrefix="cities" offer={x} setActivePlace={props.setActivePlace} key={x.id}/>)}
       </div>
     </section>
   );

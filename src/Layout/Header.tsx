@@ -1,11 +1,10 @@
 import React from 'react';
 import {City, UserDTO} from '../Types/Offer/Offer.ts';
-import {Nullable} from 'vitest';
 import {AuthContext} from '../App.tsx';
 import {NavLink} from 'react-router-dom';
 
 export interface HeaderProps {
-  currentUser: Nullable<UserDTO>;
+  currentUser?: UserDTO;
   favouritesCount: number;
   // signIn: (event: React.MouseEvent<HTMLSpanElement>) => void;
   // signOut: (event: React.MouseEvent<HTMLSpanElement>) => void;
@@ -22,7 +21,7 @@ export const Header: React.FC<HeaderProps> = (props) =>
             </NavLink>
           </div>
           <nav className="header__nav">
-            {props.currentUser !== null &&
+            {props.currentUser !== undefined &&
               <ul className="header__nav-list">
                 <li className="header__nav-item user">
                   <NavLink className="header__nav-link header__nav-link--profile" to="/favourites">
@@ -39,7 +38,7 @@ export const Header: React.FC<HeaderProps> = (props) =>
                   </NavLink>
                 </li>
               </ul>}
-            {props.currentUser === null &&
+            {props.currentUser === undefined &&
               <ul className="header__nav-list">
                 <li className="header__nav-item user">
                   <NavLink className="header__nav-link header__nav-link--profile" to="/login">

@@ -3,34 +3,33 @@ import React, {createContext, useCallback, useMemo} from 'react';
 import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 import {OfferPage} from './Pages/Offer/OfferPage.tsx';
 import {SignInPage} from './Pages/SignIn/SignInPage.tsx';
-import {FavouritesPage} from './Pages/Favourites/FavouritesPage.tsx';
-import {Nullable} from 'vitest';
+import {FavoritesPage} from './Pages/Favorites/FavoritesPage.tsx';
 import {City, UserDTO} from './Types/Offer/Offer.ts';
 import {NotFoundPage} from './Pages/NotFound/NotFoundPage.tsx';
 import {AppData} from './Mocks/mock.ts';
 
 export interface AppProps {
   data: AppData;
-  currentUser: Nullable<UserDTO>;
+  currentUser?: UserDTO;
 }
 
 export interface AuthParams {
-  currentUser: Nullable<UserDTO>;
+  currentUser?: UserDTO;
   signIn: () => void;
   signOut: () => void;
 }
 
-export const AuthContext = createContext<Nullable<AuthParams>>(null);
+export const AuthContext = createContext<AuthParams | undefined>(undefined);
 
 export const App: React.FC<AppProps> = (props) => {
-  const [currentUser, setCurrentUser] = React.useState<Nullable<UserDTO>>(props.currentUser);
+  const [currentUser, setCurrentUser] = React.useState<UserDTO | undefined>(props.currentUser);
 
   const signIn = useCallback(() => {
     setCurrentUser(props.currentUser);
   }, [props.currentUser]);
 
   const signOut = useCallback(() => {
-    setCurrentUser(null);
+    setCurrentUser(undefined);
   }, []);
 
   const authParams: AuthParams = useMemo(() => ({
@@ -49,8 +48,8 @@ export const App: React.FC<AppProps> = (props) => {
           <Route path="/main" element={<MainPage offersByCity={props.data.offersByCity} showCount={10}/>}/>
           <Route path="/main_empty" element={<MainPage offersByCity={{}} showCount={10}/>}/>
           <Route path="/offer/:id" element={<OfferPage getOffer={(id) => props.data.offersById[id]}/>}/>
-          <Route path="/favourites" element={<FavouritesPage favourites={authParams.currentUser?.favourites ?? {}}/>}/>
-          <Route path="/favourites_empty" element={<FavouritesPage favourites={{}}/>}/>
+          <Route path="/favourites" element={<FavoritesPage favourites={authParams.currentUser?.favourites ?? {}}/>}/>
+          <Route path="/favourites_empty" element={<FavoritesPage favourites={{}}/>}/>
           <Route path="*" element={<Navigate to="/not_found"/>}/>
         </Routes>
       </BrowserRouter>

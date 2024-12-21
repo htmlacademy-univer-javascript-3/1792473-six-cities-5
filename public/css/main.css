@@ -1436,9 +1436,9 @@ img {
 }
 
 .offer__map {
-  width: 100%;
+  width: 1144px;
   height: 579px;
-  margin-bottom: 50px;
+  margin: 0 auto 50px;
   background-image: url(../img/map-big.jpg);
   background-repeat: no-repeat;
   background-size: 1144px auto;
@@ -1905,6 +1905,11 @@ img {
   min-width: 150px;
   margin-right: 16px;
   margin-bottom: 0
+}
+
+.favorites__image {
+  width: 150px;
+  height: 110px;
 }
 
 .favorites__card-info {

@@ -1,18 +1,18 @@
 import React from 'react';
-import {OfferDTO} from '../../Types/Offer/Offer.ts';
 import {NavLink} from 'react-router-dom';
-import {Nullable} from 'vitest';
+import {OfferDTO} from '../Types/Offer/Offer.ts';
 
-export interface PlaceProps {
+export interface PlaceCardProps {
   offer: OfferDTO;
-  setActivePlace: (offer: Nullable<OfferDTO>) => void;
+  classPrefix: string;
+  setActivePlace?: (offer: OfferDTO | undefined) => void;
 }
 
-export const Place: React.FC<PlaceProps> = (props) => (
+export const PlaceCard: React.FC<PlaceCardProps> = (props) => (
   <article
-    className="cities__card place-card"
-    onClick={() => props.setActivePlace(props.offer)}
-    // onMouseLeave={() => props.setActivePlace(null)}
+    className={`${props.classPrefix}__card place-card`}
+    onClick={() => props.setActivePlace === undefined ? () => {} : props.setActivePlace(props.offer)}
+    // onMouseLeave={() => props.setActivePlace(undefined)}
   >
     {
       props.offer.isPremium &&
@@ -20,12 +20,12 @@ export const Place: React.FC<PlaceProps> = (props) => (
         <span>Premium</span>
       </div>
     }
-    <div className="cities__image-wrapper place-card__image-wrapper">
+    <div className={`${props.classPrefix}__image-wrapper place-card__image-wrapper`}>
       <NavLink to={`/offer/${props.offer.id}`}>
-        <img className="place-card__image" src={props.offer.imagePath} width="260" height="200" alt="Place image"/>
+        <img className={`place-card__image ${props.classPrefix}__image`} src={props.offer.imagePath} alt="Place image"/>
       </NavLink>
     </div>
-    <div className="place-card__info">
+    <div className={`${props.classPrefix}__card-info place-card__info`}>
       <div className="place-card__price-wrapper">
         <div className="place-card__price">
           <b className="place-card__price-value">&euro;{props.offer.cost}</b>
