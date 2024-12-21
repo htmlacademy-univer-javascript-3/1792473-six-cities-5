@@ -22,7 +22,7 @@ export interface OfferDetailsDTO {
   bedroomsCount: number;
   maxAdultsCount: number;
   insides: string[];
-  host: Nullable<UserDTO>;
+  host: UserDTO;
   allImagePaths: string[];
 }
 
@@ -36,9 +36,9 @@ export interface OfferDTO {
   isPremium?: boolean;
   rating: number;
   type: OfferType;
-  details?: Nullable<OfferDetailsDTO>;
+  details?: OfferDetailsDTO;
   reviews: ReviewDTO[];
-  cords?: Nullable<Cords>;
+  cords?: Cords;
   getNeighbours: () => OfferDTO[];
 }
 

@@ -1,15 +1,15 @@
 import React from 'react';
 import {City, OfferDTO} from '../../Types/Offer/Offer.ts';
-import {FavouritePlace} from './FavouritePlace.tsx';
 import {NavLink} from 'react-router-dom';
 import {Page} from '../../Layout/Page.tsx';
 import {AuthorizedHeader} from '../../Layout/Header.tsx';
+import {PlaceCard} from '../../Components/PlaceCard.tsx';
 
-export interface FavouritesPageProps {
+export interface FavoritesPageProps {
   favourites: Partial<Record<City, OfferDTO[]>>;
 }
 
-export const FavouritesPage: React.FC<FavouritesPageProps> = (props) => {
+export const FavoritesPage: React.FC<FavoritesPageProps> = (props) => {
   let content: JSX.Element;
   if (Object.keys(props.favourites).length > 0) {
     content = (
@@ -28,7 +28,7 @@ export const FavouritesPage: React.FC<FavouritesPageProps> = (props) => {
                     </div>
                   </div>
                   <div className="favorites__places">
-                    {props.favourites[c as City]?.map((o) => <FavouritePlace offer={o} key={o.id}/>)}
+                    {props.favourites[c as City]?.map((o) => <PlaceCard classPrefix="favorites" offer={o} key={o.id}/>)}
                   </div>
                 </li>
               ))}

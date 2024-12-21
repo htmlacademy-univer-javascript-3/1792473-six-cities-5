@@ -1,14 +1,14 @@
 import React, {FormEvent} from 'react';
-import {OfferDTO, ReviewDTO} from '../../Types/Offer/Offer.ts';
+import {Cords, OfferDTO, ReviewDTO} from '../../Types/Offer/Offer.ts';
 import {Review} from './Review.tsx';
-import {NearPlace} from './NearPlace.tsx';
 import {Navigate, useParams} from 'react-router-dom';
 import {Guid} from '../../Types/Common.ts';
 import {Page} from '../../Layout/Page.tsx';
 import {AuthContext} from '../../App.tsx';
 import {AuthorizedHeader} from '../../Layout/Header.tsx';
 import {CommentForm} from './CommentForm.tsx';
-import {Nullable} from 'vitest';
+import {Map} from '../../Components/Map.tsx';
+import {PlaceCard} from '../../Components/PlaceCard.tsx';
 
 
 export interface OfferPageProps {
@@ -19,7 +19,7 @@ export const OfferPage: React.FC<OfferPageProps> = (props) => {
   const params = useParams();
   const offer = props.getOffer(params.id as Guid);
   const auth = React.useContext(AuthContext);
-  const [userReview, setUserReview] = React.useState<Nullable<ReviewDTO>>(null);
+  const [userReview, setUserReview] = React.useState<ReviewDTO | undefined>(undefined);
 
   if (offer === undefined) {
     return <Navigate to="/not_found"/>;
@@ -33,9 +33,10 @@ export const OfferPage: React.FC<OfferPageProps> = (props) => {
       <section className="offer">
         <div className="offer__gallery-container container">
           <div className="offer__gallery">
-            {offer.details?.allImagePaths.map((x) =>
+            {offer.details?.allImagePaths.map((x, i) =>
               (
-                <div className="offer__image-wrapper" key={x}>
+                // eslint-disable-next-line react/no-array-index-key
+                <div className="offer__image-wrapper" key={`${x}${i}`}>
                   <img className="offer__image" src={x} alt="Photo studio"/>
                 </div>
               )
@@ -111,22 +112,24 @@ export const OfferPage: React.FC<OfferPageProps> = (props) => {
                 </span>
               </div>
               <div className="offer__description">
-                {offer.description.map((x) => <p className="offer__text" key={null}>{x}</p>)}
+                {offer.description.map((x) => <p className="offer__text" key={x}>{x}</p>)}
               </div>
             </div>
             <section className="offer__reviews reviews">
               <h2 className="reviews__title">
-                Reviews &middot; <span className="reviews__amount">{offer.reviews.length}</span>
+                Reviews &middot; <span className="reviews__amount">{offer.reviews.length + (userReview !== undefined ? 1 : 0)}</span>
               </h2>
 
-              {offer.reviews.map((x) => <Review review={x} key={x.id}/>)}
-              {userReview && <Review review={userReview}/>}
+              <ul className="reviews__list">
+                {offer.reviews.map((x) => <Review review={x} key={x.id}/>)}
+                {userReview && <Review review={userReview} key={userReview.id}/>}
+              </ul>
 
-              {auth?.currentUser !== null &&
+              {auth?.currentUser !== undefined &&
                 <CommentForm onSubmit={(e: FormEvent<HTMLFormElement>) => {
                   e.preventDefault();
                   const entries = Object.fromEntries(new FormData(e.target as HTMLFormElement));
-                  if (auth?.currentUser === null) {
+                  if (auth?.currentUser === undefined) {
                     return;
                   }
                   setUserReview({
@@ -141,13 +144,20 @@ export const OfferPage: React.FC<OfferPageProps> = (props) => {
             </section>
           </div>
         </div>
-        <section className="offer__map map"></section>
+        <section className="offer__map map">
+          <Map
+            centerCords={offer.cords}
+            centerMarkerCords={offer.cords}
+            markerCords={offer.getNeighbours().filter((x) => x.cords !== undefined).map((x) => x.cords as Cords)}
+            style={{height: '100%'}}
+          />
+        </section>
       </section>
       <div className="container">
         <section className="near-places places">
           <h2 className="near-places__title">Other places in the neighbourhood</h2>
           <div className="near-places__list places__list">
-            {offer.getNeighbours().map((x) => <NearPlace offer={x} key={x.id}/>)}
+            {offer.getNeighbours().map((x) => <PlaceCard classPrefix="near-places" offer={x} key={x.id}/>)}
           </div>
         </section>
       </div>

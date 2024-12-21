@@ -8,5 +8,5 @@ export interface AuthorizedContentProps {
 
 export const AuthorizedContent: React.FC<PropsWithChildren<AuthorizedContentProps>> = (props) => {
   const user = React.useContext(AuthContext);
-  return props.authRequired && user === null ? <Navigate to="/login"/> : props.children;
+  return props.authRequired && user === undefined ? <Navigate to="/login"/> : props.children;
 };

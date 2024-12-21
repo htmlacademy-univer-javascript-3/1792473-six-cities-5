@@ -1,13 +1,12 @@
 import React, {useMemo} from 'react';
 import {City, Cords, OfferDTO} from '../../Types/Offer/Offer.ts';
 import {CitiesNavBar} from '../Navigation/CitiesNavBar.tsx';
-import {Places} from './Places.tsx';
+import {CityPlaces} from './CityPlaces.tsx';
 import {Page} from '../../Layout/Page.tsx';
 import {AuthorizedHeader} from '../../Layout/Header.tsx';
 import {Guid} from '../../Types/Common.ts';
-import {PlaceMap} from './PlaceMap.tsx';
 import {useSearchParams} from 'react-router-dom';
-import {Nullable} from 'vitest';
+import {Map} from '../../Components/Map.tsx';
 
 export interface MainPageProps {
   // offersById: { [id: Guid]: OfferDTO };
@@ -21,20 +20,21 @@ export const MainPage: React.FC<MainPageProps> = (props) => {
   const [city, setCity] = React.useState<City>(searchParams.get('city') as City ?? cities[0]);
   const offers = Object.values(props.offersByCity[city] ?? []);
   const isEmpty = offers.length === 0;
-  const [activePlace, setActivePlace] = React.useState<Nullable<OfferDTO>>(null);
+  const [activePlace, setActivePlace] = React.useState<OfferDTO | undefined>(undefined);
 
   const setCityAndSearch = (newCity: City) => {
     setCity(newCity);
     setSearchParams({'city': newCity});
   };
 
-  const center = useMemo((): Cords | null => {
-    if (offers.length === 0) {
-      return null;
+  const center = useMemo((): Cords | undefined => {
+    const offersWithCords = offers.filter((o) => o.cords !== undefined);
+    if (offersWithCords.length === 0) {
+      return undefined;
     }
-    const xs = offers.map((o) => o.cords?.x ?? 0).filter((x) => x !== 0);
+    const xs = offersWithCords.map((o) => o.cords?.x ?? 0).filter((x) => x !== 0);
     const x = xs.reduce((a, b) => a + b) / xs.length;
-    const ys = offers.map((o) => o.cords?.y ?? 0).filter((y) => y !== 0);
+    const ys = offersWithCords.map((o) => o.cords?.y ?? 0).filter((y) => y !== 0);
     const y = ys.reduce((a, b) => a + b) / ys.length;
     return {x: x, y: y};
   }, [offers]);
@@ -47,8 +47,18 @@ export const MainPage: React.FC<MainPageProps> = (props) => {
     >
       <div className="cities">
         <div className={`cities__places-container container ${isEmpty ? 'cities__places-container--empty' : ''}`}>
-          <Places city={city} offers={offers} showCount={props.showCount} setActivePlace={setActivePlace}/>
-          <PlaceMap centerCords={activePlace?.cords ?? center} markerCords={offers.filter((x) => x.cords != null).map((x) => x.cords as Cords)}/>
+          <CityPlaces city={city} offers={offers} showCount={props.showCount} setActivePlace={setActivePlace}/>
+          {center === undefined ? <div className="cities__right-section cities__right-section-empty"/> :
+            <div className="cities__right-section">
+              <section className="cities__map">
+                <Map
+                  centerCords={center}
+                  centerMarkerCords={activePlace?.cords ?? undefined}
+                  markerCords={offers.filter((x) => x.cords !== undefined).map((x) => x.cords as Cords)}
+                  style={{height: '100%'}}
+                />
+              </section>
+            </div>}
         </div>
       </div>
     </Page>
