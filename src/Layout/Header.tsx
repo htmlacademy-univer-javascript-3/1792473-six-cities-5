@@ -1,17 +1,39 @@
-import React from 'react';
-import {City, UserDTO} from '../Types/Offer/Offer.ts';
-import {AuthContext} from '../App.tsx';
+import React, {useEffect} from 'react';
 import {NavLink} from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../index.tsx';
+import {fetchFavoritesThunk, selectFavorites} from '../Redux/Offers.ts';
+import {Spinner} from '../Components/Spinner.tsx';
+import {logoutThunk} from '../Redux/Auth.ts';
 
 export interface HeaderProps {
-  currentUser?: UserDTO;
-  favouritesCount: number;
-  // signIn: (event: React.MouseEvent<HTMLSpanElement>) => void;
-  // signOut: (event: React.MouseEvent<HTMLSpanElement>) => void;
 }
 
-export const Header: React.FC<HeaderProps> = (props) =>
-  (
+export const Header: React.FC<HeaderProps> = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const {user} = useSelector((state: RootState) => state.auth);
+  const {isLoading, error} = useSelector((state: RootState) => state.offers);
+  const favorites = useSelector(selectFavorites);
+
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchFavoritesThunk());
+    }
+  }, [dispatch, user]);
+
+  const handleLogout = () => {
+    dispatch(logoutThunk());
+  };
+
+  if (error) {
+    return <div>Ошибка {error}</div>;
+  }
+
+  if (user && (isLoading || !favorites)) {
+    return <Spinner/>;
+  }
+
+  return (
     <header className="header">
       <div className="container">
         <div className="header__wrapper">
@@ -21,30 +43,31 @@ export const Header: React.FC<HeaderProps> = (props) =>
             </NavLink>
           </div>
           <nav className="header__nav">
-            {props.currentUser !== undefined &&
+            {user !== null &&
               <ul className="header__nav-list">
                 <li className="header__nav-item user">
-                  <NavLink className="header__nav-link header__nav-link--profile" to="/favourites">
-                    <div className="header__avatar-wrapper user__avatar-wrapper" style={{borderRadius: '50%', backgroundImage: `url(${props.currentUser?.avatarImagePath ?? 'img/avatar.svg'})`}}>
+                  <NavLink className="header__nav-link header__nav-link--profile" to="/favorites">
+                    <div className="header__avatar-wrapper user__avatar-wrapper" style={{
+                      borderRadius: '50%',
+                      backgroundImage: `url(${user?.avatarUrl ?? 'img/avatar.svg'})`
+                    }}
+                    >
                     </div>
-                    <span className="header__user-name user__name">{props.currentUser?.email}</span>
-                    <span className="header__favorite-count">{props.favouritesCount}</span>
+                    <span className="header__user-name user__name">{user?.email}</span>
+                    <span className="header__favorite-count">{favorites?.length ?? 0}</span>
                   </NavLink>
                 </li>
                 <li className="header__nav-item">
-                  <NavLink className="header__nav-link" to="/login">
-                    {/*<span className="header__signout" onClick={props.signOut} style={{cursor: 'pointer'}}>Sign out</span>*/}
-                    <span className="header__signout">Sign out</span>
-                  </NavLink>
+                  <a className="header__nav-link">
+                    <span className="header__signout" onClick={handleLogout}>Sign out</span>
+                  </a>
                 </li>
               </ul>}
-            {props.currentUser === undefined &&
+            {user === null &&
               <ul className="header__nav-list">
                 <li className="header__nav-item user">
-                  <NavLink className="header__nav-link header__nav-link--profile" to="/login">
-                    <div className="header__avatar-wrapper user__avatar-wrapper">
-                    </div>
-                    {/*<span className="header__login" onClick={props.signIn} style={{cursor: 'pointer'}}>Sign in</span>*/}
+                  <NavLink className="header__nav-link header__nav-link--profile" to={`/login?backUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`}>
+                    <div className="header__avatar-wrapper user__avatar-wrapper"/>
                     <span className="header__login">Sign in</span>
                   </NavLink>
                 </li>
@@ -53,22 +76,5 @@ export const Header: React.FC<HeaderProps> = (props) =>
         </div>
       </div>
     </header>
-  );
-
-export const AuthorizedHeader: React.FC = () => {
-  const auth = React.useContext(AuthContext);
-  // const signIn = (e: React.MouseEvent<HTMLSpanElement>) => {
-  //   e.preventDefault();
-  //   auth?.signIn();
-  // };
-  // const signOut = (e: React.MouseEvent<HTMLSpanElement>) => {
-  //   e.preventDefault();
-  //   auth?.signOut();
-  // };
-  const favs = Object.keys(auth?.currentUser?.favourites ?? {}).map((x) => auth?.currentUser?.favourites[x as City]?.length ?? 0);
-  const favCount = favs.length === 0 ? 0 : favs.reduce((a, b) => a + b);
-  return (
-    // <Header currentUser={auth?.currentUser} favouritesCount={favCount} signIn={signIn} signOut={signOut}/>
-    <Header currentUser={auth?.currentUser} favouritesCount={favCount}/>
   );
 };

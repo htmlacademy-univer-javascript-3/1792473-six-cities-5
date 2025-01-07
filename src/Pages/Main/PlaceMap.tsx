@@ -1,10 +1,10 @@
 import React from 'react';
-import {Cords} from '../../Types/Offer/Offer.ts';
 import {Map} from '../../Components/Map.tsx';
+import {Location} from '../../Types/Offer/Offer.ts';
 
 export interface PlaceMapProps {
-  centerCords?: Cords;
-  markerCords?: Cords[];
+  centerCords?: Location;
+  markerCords?: Location[];
 }
 
 export const PlaceMap: React.FC<PlaceMapProps> = (props) => props.centerCords === undefined

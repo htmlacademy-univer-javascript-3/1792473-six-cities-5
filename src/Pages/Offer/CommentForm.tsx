@@ -1,27 +1,37 @@
-import React, {FormEvent} from 'react';
+import React from 'react';
+import {StarsRatingInput} from './StarsRatingInput.tsx';
 
 export interface CommentFormProps {
-  onSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  onSubmit: (data: CommentData) => void;
 }
 
-export const CommentForm: React.FC<CommentFormProps> = ({onSubmit}) =>
-  (
-    <form className="reviews__form form" onSubmit={onSubmit}>
+export interface CommentData {
+  rating: number;
+  comment: string;
+}
+
+export const CommentForm: React.FC<CommentFormProps> = ({onSubmit}) => {
+  const [data, setData] = React.useState<CommentData>({rating: 0, comment: ''});
+
+  return (
+    <form
+      className="reviews__form form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(data);
+        setData({rating: 0, comment: ''});
+      }}
+    >
       <label className="reviews__label form__label" htmlFor="review">Your review</label>
-      <div className="reviews__rating-form form__rating">
-        {[5, 4, 3, 2, 1].map((x) => (
-          <React.Fragment key={x}>
-            <input className="form__rating-input visually-hidden" name="rating" value={`${x}`} id={`${x}-stars`} type="radio"/>
-            <label htmlFor={`${x}-stars`} className="reviews__rating-label form__rating-label" title="perfect">
-              <svg className="form__star-image" width="37" height="33">
-                <use xlinkHref="#icon-star" />
-              </svg>
-            </label>
-          </React.Fragment>
-        ))}
-      </div>
-      <textarea className="reviews__textarea form__textarea" id="review" name="review" maxLength={50}
+      <StarsRatingInput rating={data.rating} setRating={(rating) => setData({...data, rating: rating})}/>
+      <textarea
+        className="reviews__textarea form__textarea"
+        id="review"
+        name="review"
+        minLength={50}
         placeholder="Tell how was your stay, what you like and what can be improved"
+        value={data.comment}
+        onChange={(e) => setData({...data, comment: e.target.value})}
       >
       </textarea>
       <div className="reviews__button-wrapper">
@@ -36,3 +46,4 @@ export const CommentForm: React.FC<CommentFormProps> = ({onSubmit}) =>
       </div>
     </form>
   );
+};

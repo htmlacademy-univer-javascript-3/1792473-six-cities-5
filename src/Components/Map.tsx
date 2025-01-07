@@ -1,23 +1,26 @@
 import React, {CSSProperties} from 'react';
 import {MapContainer, Marker, TileLayer} from 'react-leaflet';
-import {Cords} from '../Types/Offer/Offer.ts';
-import {LPinIcon, LPinActiveIcon} from './Icons.ts';
+import {LPinActiveIcon, LPinIcon} from './Icons.ts';
+import {Location} from '../Types/Offer/Offer.ts';
 
 export interface MapProps {
-  centerCords?: Cords;
-  markerCords?: Cords[];
-  centerMarkerCords?: Cords;
+  centerCords: Location;
+  markerCords: Location[];
+  centerMarkerCords?: Location;
   style?: CSSProperties;
 }
 
-export const Map: React.FC<MapProps> = (props) => props.centerCords === undefined || props.markerCords === undefined
-  ? null
-  : (
-    <MapContainer center={[props.centerCords.x, props.centerCords.y]} zoom={13} scrollWheelZoom style={props.style}>
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      {props.markerCords.map((m) => <Marker icon={LPinIcon} position={[m.x, m.y]} key={`${m.x}${m.y}`}/>)}
-      {props.centerMarkerCords && <Marker icon={LPinActiveIcon} position={[props.centerMarkerCords.x, props.centerMarkerCords.y]} key={`${props.centerMarkerCords.x}${props.centerMarkerCords.y}`}/>}
-    </MapContainer>
-  );
+export const Map: React.FC<MapProps> = (props) => (
+  <MapContainer center={[props.centerCords.latitude, props.centerCords.longitude]} zoom={props.centerCords.zoom} scrollWheelZoom style={props.style}>
+    <TileLayer
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    />
+    {props.markerCords.map((m) => <Marker icon={LPinIcon} position={[m.latitude, m.longitude]} key={`${m.latitude}${m.longitude}`}/>)}
+    {props.centerMarkerCords &&
+      <Marker
+        icon={LPinActiveIcon}
+        position={[props.centerMarkerCords.latitude, props.centerMarkerCords.longitude]}
+        key={`${props.centerMarkerCords.latitude}${props.centerMarkerCords.longitude}`}
+      />}
+  </MapContainer>
+);

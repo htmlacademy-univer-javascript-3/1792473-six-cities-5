@@ -1,24 +1,55 @@
-import React from 'react';
-import {City, OfferDTO} from '../../Types/Offer/Offer.ts';
+import React, {useMemo} from 'react';
+import {OfferDTO} from '../../Types/Offer/Offer.ts';
 import {NavLink} from 'react-router-dom';
 import {Page} from '../../Layout/Page.tsx';
-import {AuthorizedHeader} from '../../Layout/Header.tsx';
+import {Header} from '../../Layout/Header.tsx';
 import {PlaceCard} from '../../Components/PlaceCard.tsx';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../index.tsx';
+import {Spinner} from '../../Components/Spinner.tsx';
+import {selectFavorites, toggleFavoritesThunk} from '../../Redux/Offers.ts';
 
 export interface FavoritesPageProps {
-  favourites: Partial<Record<City, OfferDTO[]>>;
 }
 
-export const FavoritesPage: React.FC<FavoritesPageProps> = (props) => {
+const groupFavoritesByCity = (offers: OfferDTO[]): Record<string, OfferDTO[]> => offers.reduce((acc, o) => {
+  const city = o.city.name;
+  if (!acc[city]) {
+    acc[city] = [];
+  }
+  acc[city].push(o);
+  return acc;
+}, {} as Record<string, OfferDTO[]>);
+
+export const FavoritesPage: React.FC<FavoritesPageProps> = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const {isLoading, error} = useSelector((state: RootState) => state.offers);
+  const favorites = useSelector(selectFavorites);
+
+  const favouritesByCity = useMemo(() => groupFavoritesByCity(favorites ?? []), [favorites]);
+
+  const handleToggleFavorite = (o: OfferDTO) => {
+    dispatch(toggleFavoritesThunk({id: o.id, status: o.isFavorite ? 0 : 1}));
+  };
+
+  if (error) {
+    return <div>Ошибка {error}</div>;
+  }
+
+  if (isLoading || !favorites) {
+    return <Spinner/>;
+  }
+
   let content: JSX.Element;
-  if (Object.keys(props.favourites).length > 0) {
+
+  if (favorites.length > 0) {
     content = (
       <main className="page__main page__main--favorites page">
         <div className="page__favorites-container container">
           <section className="favorites">
             <h1 className="favorites__title">Saved listing</h1>
             <ul className="favorites__list">
-              {Object.keys(props.favourites).map((c) => (
+              {Object.keys(favouritesByCity).map((c) => (
                 <li className="favorites__locations-items" key={c}>
                   <div className="favorites__locations locations locations--current">
                     <div className="locations__item">
@@ -28,7 +59,13 @@ export const FavoritesPage: React.FC<FavoritesPageProps> = (props) => {
                     </div>
                   </div>
                   <div className="favorites__places">
-                    {props.favourites[c as City]?.map((o) => <PlaceCard classPrefix="favorites" offer={o} key={o.id}/>)}
+                    {favouritesByCity[c]?.map((o) => (
+                      <PlaceCard
+                        classPrefix="favorites"
+                        offer={o}
+                        key={o.id}
+                        toggleFavorite={() => handleToggleFavorite(o)}
+                      />))}
                   </div>
                 </li>
               ))}
@@ -56,7 +93,7 @@ export const FavoritesPage: React.FC<FavoritesPageProps> = (props) => {
   }
   return (
     <Page
-      header={<AuthorizedHeader/>}
+      header={<Header/>}
       pageClassNames=""
       authRequired
       footer=

@@ -1,9 +1,8 @@
 import React from 'react';
 import {NavLink} from 'react-router-dom';
-import {City} from '../../Types/Offer/Offer.ts';
 
 export interface NotFoundPageProps {
-  defaultCity: City;
+  defaultCity: string;
 }
 export const NotFoundPage: React.FC<NotFoundPageProps> = (props) => (
   <div className="page page--gray page--login">
@@ -26,7 +25,7 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = (props) => (
         </section>
         <section className="locations locations--login locations--current">
           <div className="locations__item">
-            <NavLink className="locations__item-link" to={`/main?city=${props.defaultCity}`}>
+            <NavLink className="locations__item-link" to={`/?city=${props.defaultCity}`}>
               <span>{props.defaultCity}</span>
             </NavLink>
           </div>

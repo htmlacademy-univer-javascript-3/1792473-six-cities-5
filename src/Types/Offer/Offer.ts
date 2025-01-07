@@ -1,45 +1,37 @@
 import {Guid} from '../Common.ts';
-import {Nullable} from 'vitest';
-export type HostLevel = 'Pro' | 'Unknown';
 
 export interface ReviewDTO {
   id: Guid;
-  user: Nullable<UserDTO>;
-  text: string;
+  date: string;
+  user: UserDTO;
+  comment: string;
   rating: number;
-  date: Date;
 }
 
 export interface UserDTO {
   name: string;
-  email: string;
-  avatarImagePath: string;
-  level: HostLevel;
-  favourites: Partial<Record<City, OfferDTO[]>>;
-}
-
-export interface OfferDetailsDTO {
-  bedroomsCount: number;
-  maxAdultsCount: number;
-  insides: string[];
-  host: UserDTO;
-  allImagePaths: string[];
+  avatarUrl: string;
+  isPro: boolean;
+  email?: string;
 }
 
 export interface OfferDTO {
   id: Guid;
+  title: string;
+  type: OfferType;
+  price: number;
   city: City;
-  cost: number;
-  shortDescription: string;
-  description: string[];
-  imagePath: string;
+  location: Location;
+  isFavorite: boolean;
   isPremium?: boolean;
   rating: number;
-  type: OfferType;
-  details?: OfferDetailsDTO;
-  reviews: ReviewDTO[];
-  cords?: Cords;
-  getNeighbours: () => OfferDTO[];
+  description?: string;
+  bedrooms?: number;
+  previewImage?: string;
+  goods?: string[];
+  host?: UserDTO;
+  images?: string[];
+  maxAdults?: number;
 }
 
 export interface Cords {
@@ -47,6 +39,17 @@ export interface Cords {
   y: number;
 }
 
-export type City = 'Paris' | 'Cologne' | 'Brussels' | 'Amsterdam' | 'Hamburg' | 'Dusseldorf';
+export interface Location {
+  latitude: number;
+  longitude: number;
+  zoom: number;
+}
 
-export type OfferType = 'Apartment' | 'Room' | 'Unknown'
+export interface City {
+  name: string;
+  location: Location;
+}
+
+export type OfferType = 'apartment' | 'room' | 'unknown';
+
+export type SortType = 'Popular' | 'Price: low to high' | 'Price: high to low' | 'Top rated first';

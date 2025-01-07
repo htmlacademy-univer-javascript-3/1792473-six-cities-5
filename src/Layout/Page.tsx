@@ -1,5 +1,5 @@
 import React, {PropsWithChildren} from 'react';
-import {AuthorizedContent} from './AuthorizedContent.tsx';
+import {PrivateRoute} from './PrivateRoute.tsx';
 
 export interface PageProps {
   authRequired?: boolean;
@@ -11,12 +11,12 @@ export interface PageProps {
 
 export const Page: React.FC<PropsWithChildren<PageProps>> = (props) =>
   (
-    <AuthorizedContent authRequired={props.authRequired}>
+    <PrivateRoute authRequired={props.authRequired}>
       {props.header}
       {props.navBar}
       <main className={`page__main ${props.pageClassNames ?? ''}`}>
         {props.children}
       </main>
       {props.footer}
-    </AuthorizedContent>
+    </PrivateRoute>
   );
