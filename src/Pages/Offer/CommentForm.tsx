@@ -1,8 +1,12 @@
 import React from 'react';
 import {StarsRatingInput} from './StarsRatingInput.tsx';
+import {useDispatch} from 'react-redux';
+import {AppDispatch} from '../../index.tsx';
+import {addReviewThunk} from '../../Redux/Offers.ts';
+import {Guid} from '../../Types/Common.ts';
 
 export interface CommentFormProps {
-  onSubmit: (data: CommentData) => void;
+  offerId: Guid;
 }
 
 export interface CommentData {
@@ -10,15 +14,20 @@ export interface CommentData {
   comment: string;
 }
 
-export const CommentForm: React.FC<CommentFormProps> = ({onSubmit}) => {
+export const CommentFormInternal: React.FC<CommentFormProps> = ({offerId}) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [data, setData] = React.useState<CommentData>({rating: 0, comment: ''});
+
+  const handleSubmit = () => {
+    dispatch(addReviewThunk({id: offerId, data: data}));
+  };
 
   return (
     <form
       className="reviews__form form"
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit(data);
+        handleSubmit();
         setData({rating: 0, comment: ''});
       }}
     >
@@ -47,3 +56,5 @@ export const CommentForm: React.FC<CommentFormProps> = ({onSubmit}) => {
     </form>
   );
 };
+
+export const CommentForm = React.memo(CommentFormInternal);

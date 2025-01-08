@@ -6,10 +6,7 @@ import {fetchFavoritesThunk, selectFavorites} from '../Redux/Offers.ts';
 import {Spinner} from '../Components/Spinner.tsx';
 import {logoutThunk} from '../Redux/Auth.ts';
 
-export interface HeaderProps {
-}
-
-export const Header: React.FC<HeaderProps> = () => {
+export const HeaderInternal: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const {user} = useSelector((state: RootState) => state.auth);
   const {isLoading, error} = useSelector((state: RootState) => state.offers);
@@ -78,3 +75,6 @@ export const Header: React.FC<HeaderProps> = () => {
     </header>
   );
 };
+
+
+export const Header = React.memo(HeaderInternal);

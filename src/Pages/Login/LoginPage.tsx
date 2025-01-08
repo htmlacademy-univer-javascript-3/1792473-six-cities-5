@@ -75,7 +75,7 @@ export const LoginPage: React.FC<LoginPageProps> = (props) => {
           </section>
           <section className="locations locations--login locations--current">
             <div className="locations__item">
-              <NavLink className="locations__item-link" to={`/main?city=${props.defaultCity}`}>
+              <NavLink className="locations__item-link" to={`/?city=${props.defaultCity}`}>
                 <span>{props.defaultCity}</span>
               </NavLink>
             </div>

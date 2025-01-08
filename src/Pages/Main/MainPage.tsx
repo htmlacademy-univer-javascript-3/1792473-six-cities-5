@@ -5,7 +5,7 @@ import {CityPlaces} from './CityPlaces.tsx';
 import {Page} from '../../Layout/Page.tsx';
 import {Header} from '../../Layout/Header.tsx';
 import {useSearchParams} from 'react-router-dom';
-import {Map} from '../../Components/Map.tsx';
+import {Map, MapMarkers} from '../../Components/Map.tsx';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectFilteredOffers, setCity} from '../../Redux/Offers.ts';
 import {Spinner} from '../../Components/Spinner.tsx';
@@ -30,10 +30,10 @@ export const MainPage: React.FC<MainPageProps> = (props) => {
 
   const [activePlace, setActivePlace] = React.useState<OfferDTO | undefined>(undefined);
 
-  const handleCityChange = (newCity: string) => {
+  const handleCityChange = React.useCallback((newCity: string) => {
     dispatch(setCity(newCity));
     setSearchParams({city: newCity});
-  };
+  }, [dispatch, setSearchParams]);
 
   if (error) {
     return <div>Ошибка {error}</div>;
@@ -54,15 +54,19 @@ export const MainPage: React.FC<MainPageProps> = (props) => {
       <div className="cities">
         <div className={`cities__places-container container ${isEmpty ? 'cities__places-container--empty' : ''}`}>
           <CityPlaces city={city} offers={filteredOffers} showCount={props.showCount} setActivePlace={setActivePlace} sortType={sortType}/>
-          {!filteredOffers || filteredOffers.length === 0 ? <div className="cities__right-section cities__right-section-empty"/> :
+          {!filteredOffers || filteredOffers.length === 0 ?
+            <div className="cities__right-section cities__right-section-empty"/> :
             <div className="cities__right-section">
               <section className="cities__map">
                 <Map
                   centerCords={filteredOffers[0].city.location}
-                  centerMarkerCords={activePlace?.location}
-                  markerCords={filteredOffers.map((x) => x.location)}
                   style={{height: '100%'}}
-                />
+                >
+                  <MapMarkers
+                    activeCords={activePlace?.location ? [activePlace?.location] : undefined}
+                    markerCords={filteredOffers.map((x) => x.location)}
+                  />
+                </Map>
               </section>
             </div>}
         </div>

@@ -1,17 +1,17 @@
 import React from 'react';
 import {NavLink} from 'react-router-dom';
 import {OfferDTO} from '../Types/Offer/Offer.ts';
-import {Toggle} from './Toggle.tsx';
+import {BookmarkToggle} from './Toggle.tsx';
 import {StarsRating} from '../Pages/Offer/StarsRating.tsx';
+import {OfferMark} from './OfferMark.tsx';
 
 export interface PlaceCardProps {
   offer: OfferDTO;
   classPrefix: string;
   setActivePlace?: (offer: OfferDTO | undefined) => void;
-  toggleFavorite?: () => void;
 }
 
-export const PlaceCard: React.FC<PlaceCardProps> = (props) => (
+export const PlaceCardInternal: React.FC<PlaceCardProps> = (props) => (
   <article
     className={`${props.classPrefix}__card place-card`}
     onMouseEnter={() => props.setActivePlace === undefined ? () => {
@@ -19,12 +19,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = (props) => (
     onMouseLeave={() => props.setActivePlace === undefined ? () => {
     } : props.setActivePlace(undefined)}
   >
-    {
-      props.offer.isPremium &&
-      <div className="place-card__mark">
-        <span>Premium</span>
-      </div>
-    }
+    <OfferMark isPremium={props.offer.isPremium} classPrefix={'place-card'}/>
     <div className={`${props.classPrefix}__image-wrapper place-card__image-wrapper`}>
       <NavLink to={`/offer/${props.offer.id}`}>
         <img className={`place-card__image ${props.classPrefix}__image`} src={props.offer.previewImage} alt="Place image"/>
@@ -36,10 +31,10 @@ export const PlaceCard: React.FC<PlaceCardProps> = (props) => (
           <b className="place-card__price-value">&euro;{props.offer.price}</b>
           <span className="place-card__price-text">&#47;&nbsp;night</span>
         </div>
-        <Toggle
+        <BookmarkToggle
           classPrefix="place-card__bookmark"
-          onToggle={props.toggleFavorite}
           altText="In bookmarks"
+          offer={props.offer}
           isActive={props.offer.isFavorite}
           iconStyle={{width: 18, height: 19}}
         />
@@ -52,3 +47,5 @@ export const PlaceCard: React.FC<PlaceCardProps> = (props) => (
     </div>
   </article>
 );
+
+export const PlaceCard = React.memo(PlaceCardInternal);

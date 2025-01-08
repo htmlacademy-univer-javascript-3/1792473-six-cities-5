@@ -23,7 +23,7 @@ export interface OfferDTO {
   city: City;
   location: Location;
   isFavorite: boolean;
-  isPremium?: boolean;
+  isPremium: boolean;
   rating: number;
   description?: string;
   bedrooms?: number;

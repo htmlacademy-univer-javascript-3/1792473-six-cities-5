@@ -124,10 +124,10 @@ export const fetchFavoritesThunk = createAsyncThunk<OfferDTO[], void, { extra: A
   }
 );
 
-export const toggleFavoritesThunk = createAsyncThunk<OfferDTO, { id: Guid; status: number }, { extra: AxiosInstance }>(
+export const toggleFavoritesThunk = createAsyncThunk<OfferDTO, { offer: OfferDTO }, { extra: AxiosInstance }>(
   'offers/toggleFavorite',
-  async ({id, status}, {extra: api}) => {
-    const response = await api.post<OfferDTO>(`favorite/${id}/${status}`);
+  async ({offer}, {extra: api}) => {
+    const response = await api.post<OfferDTO>(`favorite/${offer.id}/${offer.isFavorite ? 0 : 1}`);
     return response.data;
   }
 );
@@ -194,7 +194,7 @@ const offersSlice = createSlice({
       })
       .addCase(toggleFavoritesThunk.fulfilled, (state, action) => {
         state.isLoading = false;
-        offersAdapter.upsertOne(state.offers, action.payload);
+        offersAdapter.updateOne(state.offers, {id: action.payload.id, changes: {isFavorite: action.payload.isFavorite}});
         if (state.offer?.id === action.payload.id) {
           state.offer = action.payload;
         }

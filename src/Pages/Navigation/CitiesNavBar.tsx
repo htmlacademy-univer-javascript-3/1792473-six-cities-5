@@ -5,7 +5,7 @@ export interface CitiesNavBarProps {
   setCity: (city: string) => void;
 }
 
-export const CitiesNavBar: React.FC<CitiesNavBarProps> = (props) => (
+const CitiesNavBarInternal: React.FC<CitiesNavBarProps> = (props) => (
   <div className="tabs">
     <section className="locations container">
       <ul className="locations__list tabs__list">
@@ -20,3 +20,5 @@ export const CitiesNavBar: React.FC<CitiesNavBarProps> = (props) => (
     </section>
   </div>
 );
+
+export const CitiesNavBar = React.memo(CitiesNavBarInternal);

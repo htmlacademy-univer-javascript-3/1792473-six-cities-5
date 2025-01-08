@@ -2,7 +2,7 @@ import {OfferDTO, SortType} from '../../Types/Offer/Offer.ts';
 import React from 'react';
 import {PlaceCard} from '../../Components/PlaceCard.tsx';
 import {Dropdown} from '../../Components/Dropdown.tsx';
-import {setSortType, toggleFavoritesThunk} from '../../Redux/Offers.ts';
+import {setSortType} from '../../Redux/Offers.ts';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../index.tsx';
 
@@ -14,12 +14,8 @@ export interface CityPlacesProps {
   sortType: SortType;
 }
 
-export const CityPlaces: React.FC<CityPlacesProps> = (props) => {
+const CityPlacesInternal: React.FC<CityPlacesProps> = (props) => {
   const dispatch = useDispatch<AppDispatch>();
-
-  const handleToggleFavorite = (offer: OfferDTO) => {
-    dispatch(toggleFavoritesThunk({id: offer.id, status: offer.isFavorite ? 0 : 1}));
-  };
 
   if (!props.offers) {
     return (
@@ -50,10 +46,11 @@ export const CityPlaces: React.FC<CityPlacesProps> = (props) => {
             classPrefix="cities"
             offer={x}
             setActivePlace={props.setActivePlace}
-            toggleFavorite={() => handleToggleFavorite(x)}
             key={x.id}
           />))}
       </div>
     </section>
   );
 };
+
+export const CityPlaces = React.memo(CityPlacesInternal);
