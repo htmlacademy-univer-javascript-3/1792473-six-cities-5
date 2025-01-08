@@ -1,11 +1,10 @@
 import ReactDOM from 'react-dom/client';
 import {App} from './App.tsx';
-import {fetchFavoritesThunk, fetchOffersThunk, offersReducer} from './Redux/Offers.ts';
-import {authReducer, checkAuthThunk} from './Redux/Auth.ts';
+import {authReducer, checkAuthThunk, fetchFavoritesThunk, fetchOffersThunk, offersReducer} from './store';
 import {configureStore} from '@reduxjs/toolkit';
 import {Provider} from 'react-redux';
 import React from 'react';
-import {createAPI} from './Api.ts';
+import {createAPI} from './api.ts';
 
 const api = createAPI();
 

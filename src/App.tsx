@@ -1,21 +1,10 @@
 import React from 'react';
 import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
-import {OfferPage} from './Pages/Offer/OfferPage.tsx';
-import {LoginPage} from './Pages/Login/LoginPage.tsx';
-import {FavoritesPage} from './Pages/Favorites/FavoritesPage.tsx';
-import {UserDTO} from './Types/Offer/Offer.ts';
-import {MainPage} from './Pages/Main/MainPage.tsx';
-import {NotFoundPage} from './Pages/NotFound/NotFoundPage.tsx';
-
-export interface AppProps {
-  currentUser?: UserDTO;
-}
-
-export interface AuthParams {
-  currentUser?: UserDTO;
-  signIn: () => void;
-  signOut: () => void;
-}
+import {OfferPage} from './pages/offer/offer-page.tsx';
+import {LoginPage} from './pages/login/login.tsx';
+import {FavoritesPage} from './pages/favorites/favorites.tsx';
+import {MainPage} from './pages/main/main.tsx';
+import {NotFoundPage} from './pages/not-found/not-found.tsx';
 
 export const App: React.FC = () => (
   <BrowserRouter>
