@@ -6,27 +6,29 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../index.tsx';
 import {selectFavorites} from '../../store';
 import {FavoritesList} from './favorites-list.tsx';
+import {AppRoute} from '../../utils';
 
-const groupFavoritesByCity = (offers: OfferDTO[]): Record<string, OfferDTO[]> => offers.reduce((acc, o) => {
+const groupFavoritesByCity = (offers: OfferDTO[]): Record<string, OfferDTO[]> => offers.reduce((result, o) => {
   const city = o.city.name;
-  if (!acc[city]) {
-    acc[city] = [];
+  if (!result[city]) {
+    result[city] = [];
   }
-  acc[city].push(o);
-  return acc;
+  result[city].push(o);
+  return result;
 }, {} as Record<string, OfferDTO[]>);
 
 export const FavoritesPage: React.FC = () => {
-  const {isLoading, error} = useSelector((state: RootState) => state.offers);
+  const loading = useSelector((state: RootState) => state.offers.loading.favoritesLoading);
+  const error = useSelector((state: RootState) => state.offers.error.favoritesError);
   const favorites = useSelector(selectFavorites);
 
   const favouritesByCity = useMemo(() => groupFavoritesByCity(favorites ?? []), [favorites]);
 
   if (error) {
-    return <div>Ошибка {error}</div>;
+    return <div>Ошибка {error.message}</div>;
   }
 
-  if (isLoading || !favorites) {
+  if (loading || !favorites) {
     return <Spinner/>;
   }
 
@@ -34,13 +36,14 @@ export const FavoritesPage: React.FC = () => {
 
   return (
     <Page
-      header={<Header/>}
-      pageClassNames=""
+      header={<Header clickableLogo/>}
+      pageClassNames="page--favorites-empty"
+      contentClassNames={`page__main--favorites ${isEmpty ? 'page__main--favorites-empty' : ''}`}
       authRequired
       footer=
         {
-          <footer className="footer container page">
-            <NavLink className="footer__logo-link" to="/">
+          <footer className="footer container">
+            <NavLink className="footer__logo-link" to={AppRoute.Main}>
               <img className="footer__logo" src="img/logo.svg" alt="6 cities logo" width="64" height="33"/>
             </NavLink>
           </footer>

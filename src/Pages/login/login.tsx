@@ -1,30 +1,36 @@
-import React from 'react';
+import React, {useMemo, useState} from 'react';
 import {Navigate, NavLink, useSearchParams} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../index.tsx';
 import {AuthorizationStatus, loginThunk} from '../../store';
+import {ALL_CITY_NAMES, AppRoute, getCityPath, randomChoice} from '../../utils';
 
-export interface LoginPageProps {
-  defaultCity: string;
-}
-
-export const LoginPage: React.FC<LoginPageProps> = (props) => {
+export const LoginPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const {isLoading, authorizationStatus} = useSelector((state: RootState) => state.auth);
+  const {authorizationStatus} = useSelector((state: RootState) => state.auth);
 
   const [searchParams] = useSearchParams();
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [isSent, setIsSent] = React.useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const emailRegexp = new RegExp(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$/);
+  // сервер не принимает пароль "1Ё", видимо забыли про Ё))
+  // const passwordRegexp = new RegExp(/^(?=.*[a-zA-Zа-яА-ЯёЁ])(?=.*\d).+$/);
+  const passwordRegexp = new RegExp(/^(?=.*[a-zA-Zа-яА-Я])(?=.*\d).+$/);
+  const submitDisabled = !(emailRegexp.test(email) && passwordRegexp.test(password));
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    if (submitDisabled) {
+      return;
+    }
     dispatch(loginThunk({email, password}));
-    setIsSent(true);
   };
 
-  if (!isLoading && authorizationStatus === AuthorizationStatus.AUTH && isSent) {
-    return <Navigate to={searchParams.get('backUrl') ?? '/'}/>;
+  const randomCity = useMemo(() => randomChoice(ALL_CITY_NAMES), []);
+
+  if (authorizationStatus === AuthorizationStatus.Auth) {
+    return <Navigate to={searchParams.get('backUrl') ?? AppRoute.Main}/>;
   }
 
   return (
@@ -33,7 +39,7 @@ export const LoginPage: React.FC<LoginPageProps> = (props) => {
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              <NavLink className="header__logo-link" to="/">
+              <NavLink className="header__logo-link" to={AppRoute.Main}>
                 <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41"/>
               </NavLink>
             </div>
@@ -45,7 +51,7 @@ export const LoginPage: React.FC<LoginPageProps> = (props) => {
         <div className="page__login-container container">
           <section className="login">
             <h1 className="login__title">Sign in</h1>
-            <form className="login__form form" action="#" method="post" onSubmit={(e) => handleSubmit(e)}>
+            <form className="login__form form" action="#" method="post" onSubmit={(event) => handleSubmit(event)}>
               <div className="login__input-wrapper form__input-wrapper">
                 <label className="visually-hidden">E-mail</label>
                 <input
@@ -55,7 +61,7 @@ export const LoginPage: React.FC<LoginPageProps> = (props) => {
                   placeholder="Email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(event) => setEmail(event.target.value)}
                 />
               </div>
               <div className="login__input-wrapper form__input-wrapper">
@@ -67,16 +73,16 @@ export const LoginPage: React.FC<LoginPageProps> = (props) => {
                   placeholder="Password"
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(event) => setPassword(event.target.value)}
                 />
               </div>
-              <button className="login__submit form__submit button" type="submit">Sign in</button>
+              <button className="login__submit form__submit button" type="submit" disabled={submitDisabled}>Sign in</button>
             </form>
           </section>
           <section className="locations locations--login locations--current">
             <div className="locations__item">
-              <NavLink className="locations__item-link" to={`/?city=${props.defaultCity}`}>
-                <span>{props.defaultCity}</span>
+              <NavLink className="locations__item-link" to={getCityPath(randomCity)}>
+                <span>{randomCity}</span>
               </NavLink>
             </div>
           </section>

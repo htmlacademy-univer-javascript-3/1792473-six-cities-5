@@ -1,24 +1,27 @@
 import React, {useEffect} from 'react';
 import {Navigate, useParams} from 'react-router-dom';
-import {BookmarkToggle, Header, Map, MapMarkers, OfferMark, Page, Spinner, StarsRating} from '../../сomponents';
+import {BookmarkToggle, Header, Map, OfferMark, OfferMarkers, Page, Spinner, StarsRating} from '../../сomponents';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../index.tsx';
-import {fetchNearbyOffersThunk, fetchOfferThunk, fetchReviewsThunk,} from '../../store';
-import {OfferDTO} from '../../types';
+import {fetchNearbyOffersThunk, fetchOfferThunk, fetchReviewsThunk, selectNearPlaces,} from '../../store';
 import {OfferGallery} from './offer-gallery.tsx';
 import {OfferReviews} from './offer-reviews.tsx';
 import {OfferHost} from './offer-host.tsx';
 import {NearPlaces} from './near-places.tsx';
 import {OfferFeatures} from './offer-features.tsx';
 import {OfferGoods} from './offer-goods.tsx';
+import {AppRoute} from '../../utils';
 
 export const OfferPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const {id: offerId} = useParams<{ id: string }>();
-  const {isLoading, error, offer, reviews, nearPlaces} = useSelector((state: RootState) => state.offers);
+  const {offer, reviews} = useSelector((state: RootState) => state.offers.currentOffer);
+  const nearPlaces = useSelector(selectNearPlaces);
+  const loading = useSelector((state: RootState) => state.offers.loading.offerLoading);
+  const error = useSelector((state: RootState) => state.offers.error.offerError);
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const [activePlace, setActivePlace] = React.useState<OfferDTO | undefined>(undefined);
+  const nearestPlaces = nearPlaces?.slice(0, 3);
 
   useEffect(() => {
     if (!offerId) {
@@ -31,20 +34,20 @@ export const OfferPage: React.FC = () => {
   }, [dispatch, offerId]);
 
   if (error) {
-    return <div>Ошибка {error}</div>;
+    return <div>Ошибка {error.message}</div>;
   }
 
   if (!offerId) {
-    return <Navigate to="/not_found"/>;
+    return <Navigate to={AppRoute.NotFound}/>;
   }
 
-  if (isLoading || !offer) {
+  if (loading || !offer) {
     return <Spinner/>;
   }
 
   return (
     <Page
-      header={<Header/>}
+      header={<Header clickableLogo/>}
       pageClassNames="page__main--offer page"
     >
       <section className="offer">
@@ -77,18 +80,18 @@ export const OfferPage: React.FC = () => {
         </div>
         <section className="offer__map map">
           <Map
-            centerCords={offer.location}
+            centerCords={offer.city.location}
             style={{height: '100%'}}
           >
-            <MapMarkers
-              activeCords={[activePlace?.location ?? offer.location]}
-              markerCords={nearPlaces?.map((x) => x.location).concat([offer.location]) ?? []}
+            <OfferMarkers
+              offers={nearestPlaces?.concat([offer]) ?? [offer]}
+              activeOffers={[offer]}
             />
           </Map>
         </section>
       </section>
       <div className="container">
-        <NearPlaces nearPlaces={nearPlaces} setActivePlace={setActivePlace}/>
+        <NearPlaces nearPlaces={nearestPlaces}/>
       </div>
     </Page>
   );

@@ -9,3 +9,5 @@ export * from './private-route.tsx';
 export * from './page.tsx';
 export * from './header.tsx';
 export * from './stars-rating.tsx';
+export * from './message-box.tsx';
+export * from './server-error.tsx';

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {UserDTO} from '../../types';
 
 export interface OfferHostProps {
@@ -17,9 +17,9 @@ const OfferHostInternal: React.FC<OfferHostProps> = (props) => (
       <span className="offer__user-status">{props.host?.isPro ? 'Pro' : null}</span>
     </div>
     <div className="offer__description">
-      {props.description?.split('\n').map((x) => <p className="offer__text" key={x}>{x}</p>)}
+      {props.description?.split('\n').map((line) => <p className="offer__text" key={line}>{line}</p>)}
     </div>
   </div>
 );
 
-export const OfferHost = React.memo(OfferHostInternal);
+export const OfferHost = memo(OfferHostInternal);

@@ -1,29 +1,28 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {NavLink} from 'react-router-dom';
-import {OfferDTO} from '../types';
+import {getOfferTypeView, OfferDTO} from '../types';
 import {BookmarkToggle} from './toggle.tsx';
 import {StarsRating} from './stars-rating.tsx';
 import {OfferMark} from './offer-mark.tsx';
+import {getOfferPath} from '../utils';
 
 export interface PlaceCardProps {
   offer: OfferDTO;
   classPrefix: string;
-  setActivePlace?: (offer: OfferDTO | undefined) => void;
+  onSetActivePlace?: (offer: OfferDTO | undefined) => void;
 }
 
 export const PlaceCardInternal: React.FC<PlaceCardProps> = (props) => (
   <article
     className={`${props.classPrefix}__card place-card`}
-    onMouseEnter={() => props.setActivePlace === undefined ? () => {
-    } : props.setActivePlace(props.offer)}
-    onMouseLeave={() => props.setActivePlace === undefined ? () => {
-    } : props.setActivePlace(undefined)}
+    onMouseEnter={() => props.onSetActivePlace === undefined ? () => {
+    } : props.onSetActivePlace(props.offer)}
+    onMouseLeave={() => props.onSetActivePlace === undefined ? () => {
+    } : props.onSetActivePlace(undefined)}
   >
     <OfferMark isPremium={props.offer.isPremium} classPrefix={'place-card'}/>
     <div className={`${props.classPrefix}__image-wrapper place-card__image-wrapper`}>
-      <NavLink to={`/offer/${props.offer.id}`}>
-        <img className={`place-card__image ${props.classPrefix}__image`} src={props.offer.previewImage} alt="Place image"/>
-      </NavLink>
+      <img className={`place-card__image ${props.classPrefix}__image`} src={props.offer.previewImage} alt="Place image"/>
     </div>
     <div className={`${props.classPrefix}__card-info place-card__info`}>
       <div className="place-card__price-wrapper">
@@ -41,11 +40,11 @@ export const PlaceCardInternal: React.FC<PlaceCardProps> = (props) => (
       </div>
       <StarsRating rating={props.offer.rating} classPrefix="place-card"/>
       <h2 className="place-card__name">
-        <NavLink to={`/offer/${props.offer.id}`}>{props.offer.title}</NavLink>
+        <NavLink to={getOfferPath(props.offer.id)}>{props.offer.title}</NavLink>
       </h2>
-      <p className="place-card__type">{props.offer.type}</p>
+      <p className="place-card__type">{getOfferTypeView(props.offer.type)}</p>
     </div>
   </article>
 );
 
-export const PlaceCard = React.memo(PlaceCardInternal);
+export const PlaceCard = memo(PlaceCardInternal);

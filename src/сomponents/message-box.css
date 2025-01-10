@@ -1,0 +1,42 @@
+.message-box {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 16px;
+  border-radius: 8px;
+  color: black;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  max-width: 400px;
+}
+
+.message-box-info {
+  background-color: #CCCCCC;
+}
+
+.message-box-error {
+  background-color: #FFAAAA;
+}
+
+.message-box__content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.message-box__text {
+  font-size: 16px;
+  margin-right: 16px;
+}
+
+.message-box__close {
+  background: none;
+  border: none;
+  color: black;
+  font-size: 20px;
+  cursor: pointer;
+}

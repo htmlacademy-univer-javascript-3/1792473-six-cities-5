@@ -1,0 +1,19 @@
+.server-error__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f44336;
+  color: #fff;
+  text-align: center;
+}
+
+.server-error__title {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.server-error__message {
+  font-size: 18px;
+}

@@ -4,36 +4,78 @@ import {
   createSelector,
   createSlice,
   EntityState,
-  isAnyOf
+  isAnyOf,
+  SerializedError
 } from '@reduxjs/toolkit';
 import {AxiosInstance} from 'axios';
 import {RootState} from '../index.tsx';
 import {Guid, OfferDTO, ReviewDTO, SortType} from '../types';
 import {CommentData} from '../pages/offer/comment-form.tsx';
-
-export interface OffersState {
-  offers: EntityState<OfferDTO>;
-  offer?: OfferDTO;
-  nearPlaces?: OfferDTO[];
-  reviews: ReviewDTO[] | null;
-  isLoading: boolean;
-  error: string | null;
-  city: string;
-  sortType: SortType;
-}
+import {DEFAULT_CITY, DEFAULT_SORT_TYPE} from '../utils';
+import {checkAuthThunk, loginThunk, logoutThunk} from './auth.ts';
 
 const offersAdapter = createEntityAdapter<OfferDTO>({
   selectId: (offer) => offer.id,
 });
 
+export interface OffersState {
+  offers: EntityState<OfferDTO>;
+  city: string;
+  sortType: SortType;
+  currentOffer: {
+    offer: OfferDTO | null;
+    nearPlacesIds: Guid[] | null;
+    reviews: ReviewDTO[] | null;
+  };
+  status: {
+    successfullySentReview: boolean;
+  };
+  loading: {
+    offersLoading: boolean;
+    offerLoading: boolean;
+    nearPlacesLoading: boolean;
+    reviewsLoading: boolean;
+    favoritesLoading: boolean;
+    toggleFavoriteLoading: boolean;
+    sendingReviewLoading: boolean;
+  };
+  error: {
+    offersError: SerializedError | null;
+    offerError: SerializedError | null;
+    favoritesError: SerializedError | null;
+    toggleFavoriteError: SerializedError | null;
+    sendingReviewError: SerializedError | null;
+  };
+}
+
 const initialState: OffersState = {
   offers: offersAdapter.getInitialState(),
-  offer: undefined,
-  reviews: null,
-  isLoading: false,
-  error: null,
-  city: 'Paris',
-  sortType: 'Popular',
+  city: DEFAULT_CITY,
+  sortType: DEFAULT_SORT_TYPE,
+  currentOffer: {
+    offer: null,
+    nearPlacesIds: null,
+    reviews: null
+  },
+  status: {
+    successfullySentReview: false,
+  },
+  loading: {
+    offersLoading: false,
+    favoritesLoading: false,
+    nearPlacesLoading: false,
+    offerLoading: false,
+    sendingReviewLoading: false,
+    toggleFavoriteLoading: false,
+    reviewsLoading: false
+  },
+  error: {
+    offersError: null,
+    offerError: null,
+    favoritesError: null,
+    toggleFavoriteError: null,
+    sendingReviewError: null
+  },
 };
 
 export const selectFavorites = createSelector(
@@ -41,6 +83,17 @@ export const selectFavorites = createSelector(
   (offersState) => {
     const offers = offersAdapter.getSelectors().selectAll(offersState);
     return offers.filter((offer) => offer.isFavorite);
+  }
+);
+
+export const selectNearPlaces = createSelector(
+  [
+    (state: RootState) => state.offers.offers,
+    (state: RootState) => state.offers.currentOffer.nearPlacesIds
+  ],
+  (offersState, nearPlacesIds) => {
+    const offers = offersAdapter.getSelectors().selectEntities(offersState);
+    return nearPlacesIds?.map((id) => offers[id]).filter((offer) => offer !== undefined) as OfferDTO[];
   }
 );
 
@@ -54,11 +107,11 @@ export const selectFilteredOffers = createSelector(
     const filtered = offers.filter((offer) => offer.city.name === city);
 
     switch (sortType) {
-      case 'Price: low to high':
+      case SortType.Asc:
         return filtered.sort((a, b) => a.price - b.price);
-      case 'Price: high to low':
+      case SortType.Desc:
         return filtered.sort((a, b) => b.price - a.price);
-      case 'Top rated first':
+      case SortType.TopRated:
         return filtered.sort((a, b) => b.rating - a.rating);
       default:
         return filtered;
@@ -137,72 +190,117 @@ const offersSlice = createSlice({
     setSortType(state, action) {
       state.sortType = action.payload as SortType;
     },
+    clearSendingReviewError(state) {
+      state.error.sendingReviewError = null;
+    },
+    clearSendingReviewStatus(state) {
+      state.status.successfullySentReview = false;
+    },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchOffersThunk.pending, (state) => {
+        state.loading.offersLoading = true;
+      })
       .addCase(fetchOffersThunk.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.loading.offersLoading = false;
         offersAdapter.upsertMany(state.offers, action.payload);
       })
       .addCase(fetchOffersThunk.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message ?? 'Failed to fetch offers';
+        state.loading.offersLoading = false;
+        state.error.offersError = action.error;
+      })
+      .addCase(fetchOfferThunk.pending, (state) => {
+        state.loading.offerLoading = true;
       })
       .addCase(fetchOfferThunk.fulfilled, (state, action) => {
-        state.offer = action.payload;
-        state.isLoading = false;
+        state.currentOffer.offer = action.payload;
+        state.loading.offerLoading = false;
       })
       .addCase(fetchOfferThunk.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message ?? 'Failed to fetch offers';
-        state.offer = undefined;
+        state.loading.offerLoading = false;
+        state.error.offerError = action.error;
+        state.currentOffer.offer = null;
+      })
+      .addCase(fetchNearbyOffersThunk.pending, (state) => {
+        state.loading.nearPlacesLoading = true;
       })
       .addCase(fetchNearbyOffersThunk.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.nearPlaces = action.payload;
+        state.loading.nearPlacesLoading = false;
+        state.currentOffer.nearPlacesIds = action.payload.map((offer) => offer.id);
       })
       .addCase(fetchNearbyOffersThunk.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message ?? 'Failed to fetch offers';
-        state.nearPlaces = undefined;
+        state.loading.nearPlacesLoading = false;
+        state.error.offerError = action.error;
+        state.currentOffer.nearPlacesIds = null;
+      })
+      .addCase(fetchReviewsThunk.pending, (state) => {
+        state.loading.reviewsLoading = true;
       })
       .addCase(fetchReviewsThunk.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.reviews = action.payload;
+        state.loading.reviewsLoading = false;
+        state.currentOffer.reviews = action.payload;
       })
       .addCase(fetchReviewsThunk.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message ?? 'Failed to fetch offers';
-        state.reviews = null;
+        state.loading.reviewsLoading = false;
+        state.error.offerError = action.error;
+        state.currentOffer.reviews = null;
+      })
+      .addCase(addReviewThunk.pending, (state) => {
+        state.loading.sendingReviewLoading = true;
       })
       .addCase(addReviewThunk.fulfilled, (state, action) => {
-        state.reviews?.push(action.payload);
-        state.isLoading = false;
+        state.currentOffer.reviews?.push(action.payload);
+        state.loading.sendingReviewLoading = false;
+        state.error.sendingReviewError = null;
+        state.status.successfullySentReview = true;
+      })
+      .addCase(addReviewThunk.rejected, (state, action) => {
+        state.error.sendingReviewError = action.error;
+        state.loading.sendingReviewLoading = false;
+      })
+      .addCase(fetchFavoritesThunk.pending, (state) => {
+        state.loading.favoritesLoading = true;
       })
       .addCase(fetchFavoritesThunk.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.loading.favoritesLoading = false;
         offersAdapter.upsertMany(state.offers, action.payload);
       })
       .addCase(fetchFavoritesThunk.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message ?? 'Failed to fetch favorites';
+        state.loading.favoritesLoading = false;
+        state.error.favoritesError = action.error;
+      })
+      .addCase(toggleFavoritesThunk.pending, (state) => {
+        state.loading.toggleFavoriteLoading = true;
       })
       .addCase(toggleFavoritesThunk.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.loading.toggleFavoriteLoading = false;
         offersAdapter.updateOne(state.offers, {id: action.payload.id, changes: {isFavorite: action.payload.isFavorite}});
-        if (state.offer?.id === action.payload.id) {
-          state.offer = action.payload;
+        if (state.currentOffer.offer?.id === action.payload.id) {
+          state.currentOffer.offer = action.payload;
         }
       })
       .addCase(toggleFavoritesThunk.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.error.message ?? 'Failed to update favorite';
+        state.loading.toggleFavoriteLoading = false;
+        state.error.toggleFavoriteError = action.error;
       })
-      .addMatcher(isAnyOf(fetchOffersThunk.pending, fetchOfferThunk.pending), (state) => {
-        state.isLoading = true;
-      });
+      .addMatcher(isAnyOf(loginThunk.rejected, checkAuthThunk.rejected, logoutThunk.fulfilled),
+        (state) => {
+          const entities = Object.values(state.offers.entities)
+            .filter((offer) => offer !== undefined)
+            .map((offer) => (
+              {
+                ...offer,
+                isFavorite: false
+              } as OfferDTO));
+          offersAdapter.upsertMany(state.offers, entities);
+          if (state.currentOffer.offer) {
+            state.currentOffer.offer.isFavorite = false;
+          }
+        }
+      );
   },
 });
 
-export const {setCity, setSortType} = offersSlice.actions;
+export const {setCity, setSortType, clearSendingReviewError, clearSendingReviewStatus} = offersSlice.actions;
 export const offersReducer = offersSlice.reducer;

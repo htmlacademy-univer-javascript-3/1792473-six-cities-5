@@ -22,6 +22,13 @@ export interface OfferDTO {
   maxAdults?: number;
 }
 
-export type OfferType = 'apartment' | 'room' | 'unknown';
+export type OfferType = 'apartment' | 'room' | 'house' | 'hotel';
 
-export type SortType = 'Popular' | 'Price: low to high' | 'Price: high to low' | 'Top rated first';
+export const getOfferTypeView = (offerType: OfferType) => offerType.charAt(0).toUpperCase() + offerType.slice(1);
+
+export enum SortType {
+  Popular = 'Popular',
+  Asc = 'Price: low to high',
+  Desc = 'Price: high to low',
+  TopRated = 'Top rated first'
+}

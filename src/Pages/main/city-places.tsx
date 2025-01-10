@@ -1,5 +1,5 @@
 import {OfferDTO, SortType} from '../../types';
-import React from 'react';
+import React, {memo} from 'react';
 import {Dropdown, PlaceCard} from '../../сomponents';
 import {setSortType} from '../../store';
 import {useDispatch} from 'react-redux';
@@ -8,7 +8,6 @@ import {AppDispatch} from '../../index.tsx';
 export interface CityPlacesProps {
   offers: OfferDTO[] | undefined;
   city: string;
-  showCount: number;
   setActivePlace: (offer: OfferDTO | undefined) => void;
   sortType: SortType;
 }
@@ -16,7 +15,7 @@ export interface CityPlacesProps {
 const CityPlacesInternal: React.FC<CityPlacesProps> = (props) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  if (!props.offers) {
+  if (!props.offers || props.offers.length === 0) {
     return (
       <div className="cities__places-container cities__places-container--empty container">
         <section className="cities__no-places">
@@ -27,6 +26,7 @@ const CityPlacesInternal: React.FC<CityPlacesProps> = (props) => {
             </p>
           </div>
         </section>
+        <div className="cities__right-section cities__right-section-empty"/>
       </div>
     );
   }
@@ -35,21 +35,21 @@ const CityPlacesInternal: React.FC<CityPlacesProps> = (props) => {
       <h2 className="visually-hidden">Places</h2>
       <b className="places__found">{props.offers.length} places to stay in {props.city}</b>
       <Dropdown
-        values={['Popular', 'Price: low to high', 'Price: high to low', 'Top rated first']}
+        values={[SortType.Popular, SortType.Asc, SortType.Desc, SortType.TopRated]}
         activeValue={props.sortType}
-        setActiveValue={(x) => dispatch(setSortType(x as SortType))}
+        onSetActiveValue={(value) => dispatch(setSortType(value as SortType))}
       />
       <div className="cities__places-list places__list tabs__content">
-        {props.offers.slice(0, props.showCount).map((x) => (
+        {props.offers.map((offer) => (
           <PlaceCard
             classPrefix="cities"
-            offer={x}
-            setActivePlace={props.setActivePlace}
-            key={x.id}
+            offer={offer}
+            onSetActivePlace={props.setActivePlace}
+            key={offer.id}
           />))}
       </div>
     </section>
   );
 };
 
-export const CityPlaces = React.memo(CityPlacesInternal);
+export const CityPlaces = memo(CityPlacesInternal);

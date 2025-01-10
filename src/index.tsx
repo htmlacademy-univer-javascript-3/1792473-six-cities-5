@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client';
-import {App} from './App.tsx';
+import {App} from './app.tsx';
 import {authReducer, checkAuthThunk, fetchFavoritesThunk, fetchOffersThunk, offersReducer} from './store';
 import {configureStore} from '@reduxjs/toolkit';
 import {Provider} from 'react-redux';

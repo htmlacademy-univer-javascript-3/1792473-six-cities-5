@@ -1,8 +1,8 @@
 import React from 'react';
+import './spinner.css';
 
 export const Spinner: React.FC = () => (
-  <div className="spinner">
-    <div className="spinner__circle"></div>
-    <p>Loading...</p>
+  <div className="spinner-overlay">
+    <div className="spinner"></div>
   </div>
 );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 
 export interface OfferGalleryProps {
   imagePaths: string[] | undefined;
@@ -7,7 +7,7 @@ export interface OfferGalleryProps {
 const OfferGalleryInternal: React.FC<OfferGalleryProps> = ({imagePaths}) => (
   <div className="offer__gallery-container container">
     <div className="offer__gallery">
-      {imagePaths?.map((x, i) =>
+      {imagePaths?.slice(0, 6).map((x, i) =>
         (
           // eslint-disable-next-line react/no-array-index-key
           <div className="offer__image-wrapper" key={`${x}${i}`}>
@@ -19,4 +19,4 @@ const OfferGalleryInternal: React.FC<OfferGalleryProps> = ({imagePaths}) => (
   </div>
 );
 
-export const OfferGallery = React.memo(OfferGalleryInternal);
+export const OfferGallery = memo(OfferGalleryInternal);

@@ -7,16 +7,19 @@ export interface PageProps {
   navBar?: React.ReactNode;
   footer?: React.ReactNode;
   pageClassNames?: string;
+  contentClassNames?: string;
 }
 
 export const Page: React.FC<PropsWithChildren<PageProps>> = (props) =>
   (
     <PrivateRoute authRequired={props.authRequired}>
-      {props.header}
-      {props.navBar}
-      <main className={`page__main ${props.pageClassNames ?? ''}`}>
-        {props.children}
-      </main>
-      {props.footer}
+      <div className={`page ${props.pageClassNames ?? ''}`}>
+        {props.header}
+        {props.navBar}
+        <main className={`page__main ${props.contentClassNames ?? ''}`}>
+          {props.children}
+        </main>
+        {props.footer}
+      </div>
     </PrivateRoute>
   );

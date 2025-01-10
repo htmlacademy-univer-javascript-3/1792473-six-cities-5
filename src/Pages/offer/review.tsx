@@ -1,6 +1,7 @@
 import {ReviewDTO} from '../../types';
-import React from 'react';
+import React, {memo} from 'react';
 import {StarsRating} from '../../сomponents';
+import {formatReviewDate} from '../../utils';
 
 export interface ReviewProps {
   review: ReviewDTO;
@@ -17,9 +18,9 @@ const ReviewInternal: React.FC<ReviewProps> = ({review}) => (
     <div className="reviews__info">
       <StarsRating rating={review.rating} classPrefix="reviews"/>
       <p className="reviews__text">{review.comment}</p>
-      <time className="reviews__time" dateTime={review.date}>{review.date}</time>
+      <time className="reviews__time" dateTime={review.date}>{formatReviewDate(review.date)}</time>
     </div>
   </li>
 );
 
-export const Review = React.memo(ReviewInternal);
+export const Review = memo(ReviewInternal);

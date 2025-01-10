@@ -1,23 +1,23 @@
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice, SerializedError} from '@reduxjs/toolkit';
 import {UserDTO} from '../types';
 import {AxiosInstance} from 'axios';
 import {saveToken, removeToken} from '../services/token.ts';
 
 export enum AuthorizationStatus {
-  AUTH = 'AUTH',
-  NO_AUTH = 'NO_AUTH',
-  UNKNOWN = 'UNKNOWN'
+  Auth = 'Auth',
+  NoAuth = 'NoAuth',
+  Unknown = 'Unknown'
 }
 
 export interface AuthState {
   authorizationStatus: AuthorizationStatus;
   user: UserDTO | null;
   isLoading: boolean;
-  error: string | null;
+  error: SerializedError | null;
 }
 
 const initialState: AuthState = {
-  authorizationStatus: AuthorizationStatus.UNKNOWN,
+  authorizationStatus: AuthorizationStatus.Unknown,
   user: null,
   isLoading: false,
   error: null
@@ -44,21 +44,18 @@ export const loginThunk = createAsyncThunk<AuthDTO, { email: string; password: s
   }
 );
 
+export const logoutThunk = createAsyncThunk<void, void, { extra: AxiosInstance }>(
+  'auth/logout',
+  async (_, { extra: api}) => {
+    await api.delete('/logout');
+    removeToken();
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: initialState,
   reducers: {
-    setAuthorizationStatus(state, action) {
-      state.authorizationStatus = action.payload as AuthorizationStatus;
-    },
-    setUser(state, action) {
-      state.user = action.payload as UserDTO;
-    },
-    logout(state) {
-      removeToken();
-      state.authorizationStatus = AuthorizationStatus.NO_AUTH;
-      state.user = null as UserDTO | null;
-    }
   },
   extraReducers: (builder) => {
     builder
@@ -69,11 +66,12 @@ const authSlice = createSlice({
       .addCase(checkAuthThunk.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
-        state.authorizationStatus = AuthorizationStatus.AUTH;
+        state.authorizationStatus = AuthorizationStatus.Auth;
       })
-      .addCase(checkAuthThunk.rejected, (state) => {
+      .addCase(checkAuthThunk.rejected, (state, action) => {
         state.isLoading = false;
-        state.authorizationStatus = AuthorizationStatus.NO_AUTH;
+        state.authorizationStatus = AuthorizationStatus.NoAuth;
+        state.error = action.error;
       })
       .addCase(loginThunk.pending, (state) => {
         state.isLoading = true;
@@ -82,15 +80,18 @@ const authSlice = createSlice({
       .addCase(loginThunk.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
-        state.authorizationStatus = AuthorizationStatus.AUTH;
+        state.authorizationStatus = AuthorizationStatus.Auth;
       })
       .addCase(loginThunk.rejected, (state, action) => {
         state.isLoading = false;
-        state.authorizationStatus = AuthorizationStatus.NO_AUTH;
-        state.error = action.error.message ?? 'Failed to authorize';
+        state.authorizationStatus = AuthorizationStatus.NoAuth;
+        state.error = action.error;
+      })
+      .addCase(logoutThunk.fulfilled, (state) => {
+        state.authorizationStatus = AuthorizationStatus.NoAuth;
+        state.user = null as UserDTO | null;
       });
   },
 });
 
-export const {logout} = authSlice.actions;
 export const authReducer = authSlice.reducer;

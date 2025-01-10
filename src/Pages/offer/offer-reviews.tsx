@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {Review} from './review.tsx';
 import {Guid, ReviewDTO, UserDTO} from '../../types';
 import {CommentForm} from './comment-form.tsx';
@@ -16,11 +16,16 @@ const OfferReviewsInternal: React.FC<OfferReviewsProps> = (props) => (
     </h2>
 
     <ul className="reviews__list">
-      {props.reviews?.map((x) => <Review review={x} key={x.id}/>)}
+      {
+        (props.reviews ? [...props.reviews] : null)
+          ?.sort((review) => -new Date(review.date))
+          .slice(0, 10)
+          .map((review) => <Review review={review} key={review.id}/>)
+      }
     </ul>
 
     {props.user !== null && <CommentForm offerId={props.offerId}/>}
   </section>
 );
 
-export const OfferReviews = React.memo(OfferReviewsInternal);
+export const OfferReviews = memo(OfferReviewsInternal);

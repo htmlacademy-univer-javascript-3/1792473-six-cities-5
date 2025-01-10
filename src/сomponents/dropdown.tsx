@@ -1,13 +1,13 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 export interface DropdownProps {
   values: string[];
   activeValue: string;
-  setActiveValue: (value: string) => void;
+  onSetActiveValue: (value: string) => void;
 }
 
 export const Dropdown: React.FC<DropdownProps> = (props) => {
-  const [isOpened, setIsOpened] = React.useState(false);
+  const [isOpened, setIsOpened] = useState(false);
 
   return (
     <form className="places__sorting" action="#" method="get">
@@ -26,7 +26,7 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
               tabIndex={0}
               key={x}
               onClick={() => {
-                props.setActiveValue(x);
+                props.onSetActiveValue(x);
                 setIsOpened(false);
               }}
             >
