@@ -1,6 +1,6 @@
 import {OfferDTO, SortType} from '../../types';
 import React, {memo} from 'react';
-import {Dropdown, PlaceCard} from '../../сomponents';
+import {Dropdown, PlaceCard} from '../../components';
 import {setSortType} from '../../store';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../index.tsx';

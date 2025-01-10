@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Navigate, useParams} from 'react-router-dom';
-import {BookmarkToggle, Header, Map, OfferMark, OfferMarkers, Page, Spinner, StarsRating} from '../../сomponents';
+import {BookmarkToggle, Header, Map, OfferMark, OfferMarkers, Page, Spinner, StarsRating} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../index.tsx';
 import {fetchNearbyOffersThunk, fetchOfferThunk, fetchReviewsThunk, selectNearPlaces,} from '../../store';

@@ -8,7 +8,7 @@ import {NotFoundPage} from './pages/not-found/not-found.tsx';
 import {AppRoute} from './utils';
 import {useSelector} from 'react-redux';
 import {RootState} from './index.tsx';
-import {ServerErrorPage, Spinner} from './сomponents';
+import {ServerErrorPage, Spinner} from './components';
 
 export const App: React.FC = () => {
   const {isLoading, error} = useSelector((state: RootState) => state.auth);

@@ -4,7 +4,7 @@ import {AppDispatch, RootState} from '../../index.tsx';
 import {addReviewThunk, clearSendingReviewError, clearSendingReviewStatus} from '../../store';
 import {Guid} from '../../types';
 import {StarsRatingInput} from './stars-rating-input.tsx';
-import {MessageBox} from '../../сomponents';
+import {MessageBox} from '../../components';
 
 export interface CommentFormProps {
   offerId: Guid;

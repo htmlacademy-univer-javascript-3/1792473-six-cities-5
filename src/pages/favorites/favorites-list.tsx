@@ -1,5 +1,5 @@
 import React from 'react';
-import {PlaceCard} from '../../сomponents';
+import {PlaceCard} from '../../components';
 import {OfferDTO} from '../../types';
 import {NavLink} from 'react-router-dom';
 import {getCityPath} from '../../utils';
