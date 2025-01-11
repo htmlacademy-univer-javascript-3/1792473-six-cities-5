@@ -1,6 +1,6 @@
 import React, {memo} from 'react';
 import {OfferDTO} from '../../types';
-import {PlaceCard} from '../../сomponents';
+import {PlaceCard} from '../../components';
 
 export interface NearPlacesProps {
   nearPlaces: OfferDTO[] | undefined;

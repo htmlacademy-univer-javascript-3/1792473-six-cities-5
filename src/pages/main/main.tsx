@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState,} from 'react';
-import {Header, Map, OfferMarkers, Page, Spinner} from '../../сomponents';
+import {Header, Map, OfferMarkers, Page, Spinner} from '../../components';
 import {useSearchParams} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectFilteredOffers, setCity} from '../../store';

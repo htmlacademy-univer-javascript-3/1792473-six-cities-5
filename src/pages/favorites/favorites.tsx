@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import {OfferDTO} from '../../types';
 import {NavLink} from 'react-router-dom';
-import {Header, Page, Spinner} from '../../сomponents';
+import {Header, Page, Spinner} from '../../components';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../index.tsx';
 import {selectFavorites} from '../../store';

@@ -1,6 +1,6 @@
 import {ReviewDTO} from '../../types';
 import React, {memo} from 'react';
-import {StarsRating} from '../../сomponents';
+import {StarsRating} from '../../components';
 import {formatReviewDate} from '../../utils';
 
 export interface ReviewProps {
