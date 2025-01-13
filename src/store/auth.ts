@@ -56,6 +56,9 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: initialState,
   reducers: {
+    clearAuthError(state) {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -68,10 +71,9 @@ const authSlice = createSlice({
         state.user = action.payload;
         state.authorizationStatus = AuthorizationStatus.Auth;
       })
-      .addCase(checkAuthThunk.rejected, (state, action) => {
+      .addCase(checkAuthThunk.rejected, (state) => {
         state.isLoading = false;
         state.authorizationStatus = AuthorizationStatus.NoAuth;
-        state.error = action.error;
       })
       .addCase(loginThunk.pending, (state) => {
         state.isLoading = true;
@@ -94,4 +96,5 @@ const authSlice = createSlice({
   },
 });
 
+export const {clearAuthError} = authSlice.actions;
 export const authReducer = authSlice.reducer;

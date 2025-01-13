@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react';
 import {Navigate, useParams} from 'react-router-dom';
-import {BookmarkToggle, Header, Map, OfferMark, OfferMarkers, Page, Spinner, StarsRating} from '../../components';
+import {BookmarkToggle, Header, OfferMark, OfferMarkers, Page, Spinner, StarsRating, Map} from '../../components';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../index.tsx';
-import {fetchNearbyOffersThunk, fetchOfferThunk, fetchReviewsThunk, selectNearPlaces,} from '../../store';
+import {fetchNearbyOffersThunk, fetchOfferThunk, fetchReviewsThunk, selectNearPlaces} from '../../store';
 import {OfferGallery} from './offer-gallery.tsx';
 import {OfferReviews} from './offer-reviews.tsx';
 import {OfferHost} from './offer-host.tsx';
@@ -11,6 +11,8 @@ import {NearPlaces} from './near-places.tsx';
 import {OfferFeatures} from './offer-features.tsx';
 import {OfferGoods} from './offer-goods.tsx';
 import {AppRoute} from '../../utils';
+
+const NEAR_PLACES_MAX_VIEW_COUNT = 3;
 
 export const OfferPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,16 +23,24 @@ export const OfferPage: React.FC = () => {
   const error = useSelector((state: RootState) => state.offers.error.offerError);
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const nearestPlaces = nearPlaces?.slice(0, 3);
+  const nearestPlaces = nearPlaces?.slice(0, NEAR_PLACES_MAX_VIEW_COUNT);
 
   useEffect(() => {
+    let isMounted = true;
+
     if (!offerId) {
-      return () => {
-      };
+      return () => {};
     }
-    dispatch(fetchOfferThunk({id: offerId}));
-    dispatch(fetchNearbyOffersThunk({id: offerId}));
-    dispatch(fetchReviewsThunk({id: offerId}));
+
+    if (isMounted) {
+      dispatch(fetchOfferThunk({id: offerId}));
+      dispatch(fetchNearbyOffersThunk({id: offerId}));
+      dispatch(fetchReviewsThunk({id: offerId}));
+    }
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch, offerId]);
 
   if (error) {
@@ -80,7 +90,7 @@ export const OfferPage: React.FC = () => {
         </div>
         <section className="offer__map map">
           <Map
-            centerCords={offer.city.location}
+            center={offer.city.location}
             style={{height: '100%'}}
           >
             <OfferMarkers

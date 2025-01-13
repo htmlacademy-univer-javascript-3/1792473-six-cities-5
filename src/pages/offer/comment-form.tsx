@@ -16,6 +16,9 @@ export interface CommentData {
   disabled: boolean;
 }
 
+const MIN_COMMENT_LENGTH = 50;
+const MAX_COMMENT_LENGTH = 300;
+
 export const CommentFormInternal: React.FC<CommentFormProps> = ({offerId}) => {
   const dispatch = useDispatch<AppDispatch>();
   const loading = useSelector((state: RootState) => state.offers.loading.sendingReviewLoading);
@@ -29,10 +32,16 @@ export const CommentFormInternal: React.FC<CommentFormProps> = ({offerId}) => {
   };
 
   useEffect(() => {
-    if (status) {
+    let isMounted = true;
+
+    if (status && isMounted) {
       dispatch(clearSendingReviewStatus());
       setData({rating: 0, comment: ''} as CommentData);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch, status]);
 
   const handleCloseMessageBox = () => {
@@ -50,8 +59,8 @@ export const CommentFormInternal: React.FC<CommentFormProps> = ({offerId}) => {
             className="reviews__textarea form__textarea"
             id="review"
             name="review"
-            minLength={50}
-            maxLength={300}
+            minLength={MIN_COMMENT_LENGTH}
+            maxLength={MAX_COMMENT_LENGTH}
             placeholder="Tell how was your stay, what you like and what can be improved"
             value={data.comment}
             onChange={(event) => setData({...data, comment: event.target.value})}

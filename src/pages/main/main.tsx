@@ -18,14 +18,20 @@ export const MainPage: React.FC = () => {
   const filteredOffers = useSelector(selectFilteredOffers);
 
   useEffect(() => {
+    let isMounted = true;
+
     const cityFromParams = searchParams.get('city');
-    if (cityFromParams && cityFromParams !== city) {
+    if (isMounted && cityFromParams && cityFromParams !== city) {
       if (ALL_CITY_NAMES.includes(cityFromParams)) {
         dispatch(setCity(cityFromParams));
       } else {
         setSearchParams({});
       }
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [searchParams, city, dispatch, setSearchParams]);
 
   const [activePlace, setActivePlace] = useState<OfferDTO | undefined>(undefined);
@@ -60,7 +66,7 @@ export const MainPage: React.FC = () => {
             <div className="cities__right-section">
               <section className="cities__map">
                 <Map
-                  centerCords={filteredOffers[0].city.location}
+                  center={filteredOffers[0].city.location}
                   style={{height: '100%'}}
                 >
                   <OfferMarkers

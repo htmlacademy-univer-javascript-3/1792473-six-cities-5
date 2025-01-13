@@ -5,9 +5,12 @@ export interface StarsRatingInputProps {
   onSetRating: (rating: number) => void;
 }
 
+const MAX_RATING = 5;
+const stars = Array.from({length: MAX_RATING}, (_, i) => MAX_RATING - i);
+
 export const StarsRatingInput: React.FC<StarsRatingInputProps> = (props) => (
   <div className="reviews__rating-form form__rating">
-    {[5, 4, 3, 2, 1].map((i) => (
+    {stars.map((i) => (
       <React.Fragment key={i}>
         <input
           className="form__rating-input visually-hidden"

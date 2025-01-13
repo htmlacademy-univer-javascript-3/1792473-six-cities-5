@@ -3,7 +3,7 @@ import {AppDispatch, RootState} from '../index.tsx';
 import {useDispatch, useSelector} from 'react-redux';
 import {OfferDTO} from '../types';
 import {toggleFavoritesThunk} from '../store';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {getLoginPath} from '../utils';
 
 export interface ToggleProps {
@@ -37,6 +37,7 @@ export interface BookmarkToggleProps {
 
 export const BookmarkToggle: React.FC<BookmarkToggleProps> = (props) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.auth.user);
   const favoritesLoading = useSelector((state: RootState) => state.offers.loading.favoritesLoading);
@@ -44,11 +45,11 @@ export const BookmarkToggle: React.FC<BookmarkToggleProps> = (props) => {
 
   const handleToggleFavorite = useCallback(() => {
     if (!user) {
-      navigate(getLoginPath(window.location.pathname + window.location.search));
+      navigate(getLoginPath(location.pathname + location.search));
     } else {
       dispatch(toggleFavoritesThunk({offer: props.offer}));
     }
-  }, [dispatch, navigate, props.offer, user]);
+  }, [dispatch, location.pathname, location.search, navigate, props.offer, user]);
 
   return (
     <Toggle
