@@ -9,6 +9,8 @@ export interface OfferReviewsProps {
   user: UserDTO | null;
 }
 
+const REVIEWS_MAX_VIEW_COUNT = 10;
+
 const OfferReviewsInternal: React.FC<OfferReviewsProps> = (props) => (
   <section className="offer__reviews reviews">
     <h2 className="reviews__title">
@@ -19,7 +21,7 @@ const OfferReviewsInternal: React.FC<OfferReviewsProps> = (props) => (
       {
         (props.reviews ? [...props.reviews] : null)
           ?.sort((review) => -new Date(review.date))
-          .slice(0, 10)
+          .slice(0, REVIEWS_MAX_VIEW_COUNT)
           .map((review) => <Review review={review} key={review.id}/>)
       }
     </ul>

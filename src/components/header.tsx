@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import {NavLink} from 'react-router-dom';
+import {NavLink, useLocation} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../index.tsx';
 import {logoutThunk, selectFavorites} from '../store';
@@ -12,6 +12,7 @@ export interface HeaderProps {
 
 export const HeaderInternal: React.FC<HeaderProps> = ({clickableLogo}) => {
   const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
   const {user} = useSelector((state: RootState) => state.auth);
   const loading = useSelector((state: RootState) => state.offers.loading.favoritesLoading);
   const favorites = useSelector(selectFavorites);
@@ -63,7 +64,7 @@ export const HeaderInternal: React.FC<HeaderProps> = ({clickableLogo}) => {
                 <li className="header__nav-item user">
                   <NavLink
                     className="header__nav-link header__nav-link--profile"
-                    to={getLoginPath(window.location.pathname + window.location.search)}
+                    to={getLoginPath(location.pathname + location.search)}
                   >
                     <div className="header__avatar-wrapper user__avatar-wrapper"/>
                     <span className="header__login">Sign in</span>
